@@ -200,30 +200,7 @@ public class Backpropagation : MonoBehaviour {
 		int iterations=0,MaxSamples=RecordCount;
 		
 		while(true){
-			if (++i == MaxSamples)
-				i = 0;
-			
-			inputs[0] = samples[i].health;
-			inputs[1] = samples[i].knife;
-			inputs[2] = samples[i].gun;
-			inputs[3] = samples[i].enemy;
-			
-			targets[0] = samples[i].output[0];
-			targets[1] = samples[i].output[1];
-			targets[2] = samples[i].output[2];
-			targets[3] = samples[i].output[3];
 
-			feedForward();
-			
-			float err = 0.0f;
-			for (int j=0; j<OutputNeurons; j++)
-				err += Mathf.Pow(samples[i].output[j]-outputs[j],2);
-			
-			err = (float)0.5*err;
-			//Debug.Log("mse="+err);
-			if (iterations++ > 20000)
-				break;
-			backPropagate();
 		}		
 	}
 	
