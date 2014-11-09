@@ -49,7 +49,33 @@ public class quadPhysics : MonoBehaviour
 		lrEngine2 = GameObject.Find ("quadcopter/Plane").GetComponent<LineRenderer> ();
 		lrEngine3 = GameObject.Find ("quadcopter/Plane_001").GetComponent<LineRenderer> ();
 		lrEngine4 = GameObject.Find ("quadcopter/Plane_003").GetComponent<LineRenderer> ();
+
+		float dt = Time.deltaTime * 1;
 		
+		Vector4 inputs = controller.getInputs (transform.position, xdot, theta, thetadot);
+		lastInput = inputs;
+		
+		omega = thetadot2omega (thetadot, theta);
+		omegadot = angular_acceleration (inputs);
+		Vector3 acc = acceleration (inputs, omega);
+		
+		omega += omegadot * dt;
+		thetadot = omega2thetadot (omega, theta);
+		theta += thetadot * dt;
+		xdot += acc * dt;
+		transform.position += xdot * dt;
+		transform.rotation = Quaternion.Euler (theta * 360 / 6.28f);
+		
+		transform.Rotate (new Vector3 (-90, 0, 0));
+		
+		// visual thrust indicators update
+		float scale = 0.01f;
+		lrEngine1.SetPosition (1, new Vector3 (0, 0, inputs [0] * scale));
+		lrEngine2.SetPosition (1, new Vector3 (0, 0, inputs [1] * scale));
+		lrEngine3.SetPosition (1, new Vector3 (0, 0, inputs [2] * scale));
+		lrEngine4.SetPosition (1, new Vector3 (0, 0, inputs [3] * scale));
+
+
 		reset ();
 	}
 	
@@ -85,31 +111,7 @@ public class quadPhysics : MonoBehaviour
 		Destroy(gameObject);
 
 
-		float dt = Time.deltaTime * 1;
 
-		Vector4 inputs = controller.getInputs (transform.position, xdot, theta, thetadot);
-		lastInput = inputs;
-
-		omega = thetadot2omega (thetadot, theta);
-		omegadot = angular_acceleration (inputs);
-		Vector3 acc = acceleration (inputs, omega);
-
-		omega += omegadot * dt;
-		thetadot = omega2thetadot (omega, theta);
-		theta += thetadot * dt;
-		xdot += acc * dt;
-		transform.position += xdot * dt;
-		transform.rotation = Quaternion.Euler (theta * 360 / 6.28f);
-
-		transform.Rotate (new Vector3 (-90, 0, 0));
-
-		// visual thrust indicators update
-		float scale = 0.01f;
-		lrEngine1.SetPosition (1, new Vector3 (0, 0, inputs [0] * scale));
-		lrEngine2.SetPosition (1, new Vector3 (0, 0, inputs [1] * scale));
-		lrEngine3.SetPosition (1, new Vector3 (0, 0, inputs [2] * scale));
-		lrEngine4.SetPosition (1, new Vector3 (0, 0, inputs [3] * scale));
-		
 
 		if (Input.GetKeyDown (KeyCode.X)) {
 			transform.Rotate (new Vector3 (25, 0, 0));
@@ -118,19 +120,42 @@ public class quadPhysics : MonoBehaviour
 		string cmd = bp.action (new float[4]{LifeValue,HaveKnife,HaveGun,BulletAmount});
 		switch(cmd){
 		case "A":
-			transform.Rotate (new Vector3 (25, 0, 0));
+			transform.Rotate (new Vector3 (5, 0, 0));
+
+			LifeValue = 1.0f;
+			HaveKnife = 0.0f;
+			HaveGun = 0.0f;
+			
+			BulletAmount = 2.0f;
+
 			Debug.Log("a");
 			break;
 		case "B":
-			transform.Rotate (new Vector3 (25, 0, 0));
+			transform.Rotate (new Vector3 (0, 5, 0));
 			Debug.Log("b");
+			LifeValue = 1.0f;
+			HaveKnife = 0.0f;
+			HaveGun = 1.0f;
+			
+			BulletAmount = 2.0f;
 			break;
 		case "C":
-			transform.Rotate (new Vector3 (25, 0, 0));
+			transform.Rotate (new Vector3 (0, -5, 0));
+			LifeValue = 1.0f;
+			HaveKnife = 1.0f;
+			HaveGun = 0.0f;
+			
+			BulletAmount = 0.0f;
 			Debug.Log("c");
 			break;
 		case "D":
-			transform.Rotate (new Vector3 (25, 0, 0));
+			transform.Rotate (new Vector3 (0, 0, 5));
+			LifeValue = 1.0f;
+			HaveKnife = 1.0f;
+			HaveGun = 1.0f;
+			
+			BulletAmount = 0.0f;
+
 			Debug.Log("d");
 			break;	
 		}
