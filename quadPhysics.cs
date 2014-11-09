@@ -3,7 +3,13 @@ using System.Collections;
 
 public class quadPhysics : MonoBehaviour
 {
-
+	private Backpropagation bp = null;
+	
+	public float LifeValue = 2.0f;
+	public float HaveKnife = 1.0f;
+	public float HaveGun = 1.0f;
+	
+	public float BulletAmount = 2.0f;
 	// physics coefficients
 	public float k;				// thrust coefficient
 	public float b;				// drag coefficient
@@ -36,6 +42,7 @@ public class quadPhysics : MonoBehaviour
 	// Use this for initialization
 	private void Start ()
 	{
+		bp = GameObject.Find("GM").GetComponent<Backpropagation>();
 		controller = (IQuadController)GetComponent (typeof(IQuadController));
 		
 		lrEngine1 = GameObject.Find ("quadcopter/Plane_002").GetComponent<LineRenderer> ();
@@ -74,11 +81,15 @@ public class quadPhysics : MonoBehaviour
 	// Update is called once per frame
 	private void Update ()
 	{
+		if (Input.GetKeyDown ("space"))
+		Destroy(gameObject);
+
+
 		float dt = Time.deltaTime * 1;
-		
+
 		Vector4 inputs = controller.getInputs (transform.position, xdot, theta, thetadot);
 		lastInput = inputs;
-		
+
 		omega = thetadot2omega (thetadot, theta);
 		omegadot = angular_acceleration (inputs);
 		Vector3 acc = acceleration (inputs, omega);
@@ -89,15 +100,46 @@ public class quadPhysics : MonoBehaviour
 		xdot += acc * dt;
 		transform.position += xdot * dt;
 		transform.rotation = Quaternion.Euler (theta * 360 / 6.28f);
-		
-		transform.Rotate (new Vector3(-90, 0, 0));
-		
+
+		transform.Rotate (new Vector3 (-90, 0, 0));
+
 		// visual thrust indicators update
 		float scale = 0.01f;
 		lrEngine1.SetPosition (1, new Vector3 (0, 0, inputs [0] * scale));
 		lrEngine2.SetPosition (1, new Vector3 (0, 0, inputs [1] * scale));
 		lrEngine3.SetPosition (1, new Vector3 (0, 0, inputs [2] * scale));
 		lrEngine4.SetPosition (1, new Vector3 (0, 0, inputs [3] * scale));
+		
+
+		if (Input.GetKeyDown (KeyCode.X)) {
+			transform.Rotate (new Vector3 (25, 0, 0));
+				}
+
+		string cmd = bp.action (new float[4]{LifeValue,HaveKnife,HaveGun,BulletAmount});
+		switch(cmd){
+		case "A":
+			transform.Rotate (new Vector3 (25, 0, 0));
+			Debug.Log("a");
+			break;
+		case "B":
+			transform.Rotate (new Vector3 (25, 0, 0));
+			Debug.Log("b");
+			break;
+		case "C":
+			transform.Rotate (new Vector3 (25, 0, 0));
+			Debug.Log("c");
+			break;
+		case "D":
+			transform.Rotate (new Vector3 (25, 0, 0));
+			Debug.Log("d");
+			break;	
+		}
+
+
+		if (Input.GetKeyDown (KeyCode.R)) {
+			this.reset ();
+						controller.reset ();
+				}
 	}
 	
 	
