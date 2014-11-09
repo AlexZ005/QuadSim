@@ -133,23 +133,26 @@ public class quadPhysics : MonoBehaviour
 		case "B":
 			transform.Rotate (new Vector3 (0, 5, 0));
 			Debug.Log("b");
-			LifeValue = 1.0f;
+			LifeValue = 0.0f;
 			HaveKnife = 0.0f;
 			HaveGun = 0.0f;
 			
-			BulletAmount = 2.0f;
-
+			BulletAmount = 0.0f;
 			break;
 		case "C":
 			transform.Rotate (new Vector3 (0, -5, 0));
-
+//			LifeValue = 0.0f;
+//			HaveKnife = 0.0f;
+//			HaveGun = 0.0f;
+//			
+//			BulletAmount = 0.0f;
 			Debug.Log("c");
 			break;
 		case "D":
 			transform.Rotate (new Vector3 (0, 0, 5));
 			LifeValue = 0.0f;
-			HaveKnife = 0.0f;
-			HaveGun = 0.0f;
+			HaveKnife = 1.0f;
+			HaveGun = 1.0f;
 			
 			BulletAmount = 0.0f;
 
