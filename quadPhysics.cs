@@ -120,24 +120,25 @@ public class quadPhysics : MonoBehaviour
 		string cmd = bp.action (new float[4]{LifeValue,HaveKnife,HaveGun,BulletAmount});
 		switch(cmd){
 		case "A":
-			transform.Rotate (new Vector3 (5, 0, 0));
+			//transform.Rotate (new Vector3 (5, 0, 0));
 
-			LifeValue = 1.0f;
-			HaveKnife = 0.0f;
-			HaveGun = 0.0f;
-			
-			BulletAmount = 2.0f;
+//			LifeValue = 0.0f;
+//			HaveKnife = 1.0f;
+//			HaveGun = 1.0f;
+//			
+//			BulletAmount = 0.0f;
 
-			Debug.Log("a");
+//			Debug.Log("a");
 			break;
 		case "B":
 			transform.Rotate (new Vector3 (0, 5, 0));
-			Debug.Log("b");
-			LifeValue = 0.0f;
-			HaveKnife = 0.0f;
-			HaveGun = 0.0f;
-			
-			BulletAmount = 0.0f;
+//			Debug.Log("b");
+//			LifeValue = 1.0f;
+//			HaveKnife = 0.0f;
+//			HaveGun = 0.0f;
+//			
+//			BulletAmount = 2.0f;
+
 			break;
 		case "C":
 			transform.Rotate (new Vector3 (0, -5, 0));
@@ -150,13 +151,14 @@ public class quadPhysics : MonoBehaviour
 			break;
 		case "D":
 			transform.Rotate (new Vector3 (0, 0, 5));
-			LifeValue = 0.0f;
-			HaveKnife = 1.0f;
-			HaveGun = 1.0f;
-			
-			BulletAmount = 0.0f;
+//			LifeValue = 0.0f;
+//			HaveKnife = 0.0f;
+//			HaveGun = 0.0f;
+//			
+//			BulletAmount = 0.0f;
 
-			Debug.Log("d");
+
+//			Debug.Log("d");
 			break;	
 		}
 
@@ -181,9 +183,9 @@ public class quadPhysics : MonoBehaviour
 		
 		GUI.color = Color.white;
 	
-		GUI.Box(new Rect(5, 20, 200, 250), "Parameters");
+		GUI.Box(new Rect(5, 70, 200, 250), "Parameters");
 	
-		GUI.Label (new Rect (10, 50, Screen.width, Screen.height),
+		GUI.Label (new Rect (10, 100, Screen.width, Screen.height),
 			"\nx:        " + transform.position.ToString () +
 			"\nxdot:     " + xdot.ToString () +
 			"\n\nomega:    " + omega.ToString () +

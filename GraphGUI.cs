@@ -72,7 +72,7 @@ public class GraphGUI : MonoBehaviour
 	
 	void OnGUI()
 	{
-		ScreenSpace = GUILayout.Toggle(ScreenSpace, "Screen space");
+		//ScreenSpace = GUILayout.Toggle(ScreenSpace, "Screen space");
 		
 		if(!ScreenSpace) return;
 		

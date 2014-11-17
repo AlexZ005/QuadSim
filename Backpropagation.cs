@@ -22,7 +22,7 @@ public class Sample{
 
 public class Backpropagation : MonoBehaviour {
 	
-	public int InputNeurons = 4;
+	public int InputNeurons = 4;									//Входящие нейроны
 	public int OutputNeurons = 4;
 	public int HiddenNeurons = 3;
 	public float LearnRate = 0.2f;
@@ -96,7 +96,7 @@ public class Backpropagation : MonoBehaviour {
 			sum = 0.0;
 			for (i = 0; i< InputNeurons; i++)
 				sum += inputs[i]*weightIH[i,h];
-			
+			Debug.Log(hiddens[h]);
 			/* Add in Bias */
 			sum += weightIH[InputNeurons,h];
 			hiddens[h] = sigmoid(sum);
@@ -192,6 +192,8 @@ public class Backpropagation : MonoBehaviour {
 			string[] result = text.Split(new char[]{','});
 			samples[i++] = new Sample(result);
 			text = reader.ReadLine();
+			//Debug.Log (text);
+
 		}
 		reader.Close();
 		RecordCount = i;
@@ -202,7 +204,7 @@ public class Backpropagation : MonoBehaviour {
 		while(true){
 			if (++i == MaxSamples)
 				i = 0;
-			
+			//Debug.Log(iterations + " " + i + " " + samples[i].health);
 			inputs[0] = samples[i].health;
 			inputs[1] = samples[i].knife;
 			inputs[2] = samples[i].gun;
@@ -221,7 +223,7 @@ public class Backpropagation : MonoBehaviour {
 			
 			err = (float)0.5*err;
 			//Debug.Log("mse="+err);
-			if (iterations++ > 20000)
+			if (iterations++ > 200)
 				break;
 			backPropagate();
 		}		
