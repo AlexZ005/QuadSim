@@ -7,7 +7,7 @@ public class Sample{
 	public float health,knife,gun,enemy;
 	public float[] output = new float[4]; 
 	
-	public Sample(string[] atts){
+	public Sample(string[] atts){								//переменные для загрузки цифр с файла
 		health = Convert.ToSingle(atts[0]);
 		knife = Convert.ToSingle(atts[1]);
 		gun = Convert.ToSingle(atts[2]);
@@ -69,7 +69,7 @@ public class Backpropagation : MonoBehaviour {
 	 *
 	 */
 	float sigmoid(double val){
-		return (float)(1.0/(1.0+Mathf.Exp((float)-val)));
+		return (float)((2.0/(1.0+Mathf.Exp((float)-val)))-1);
 	}
 	
 	/*
@@ -96,7 +96,7 @@ public class Backpropagation : MonoBehaviour {
 			sum = 0.0;
 			for (i = 0; i< InputNeurons; i++)
 				sum += inputs[i]*weightIH[i,h];
-			Debug.Log(hiddens[h]);
+			//Debug.Log(hiddens[h]);
 			/* Add in Bias */
 			sum += weightIH[InputNeurons,h];
 			hiddens[h] = sigmoid(sum);
@@ -229,13 +229,8 @@ public class Backpropagation : MonoBehaviour {
 		}		
 	}
 	
-	/*
-	 *  assignRandomWeights()
-	 *
-	 *  Assign a set of random weights to the network.
-	 *
-	 */
-	void assignRandomWeights(){
+
+	void assignRandomWeights(){									//Присваивание случайных весов
 		for (int i = 0; i < InputNeurons+1; i++)
 			for (int h = 0; h < HiddenNeurons; h++)
 				weightIH[i,h] = UnityEngine.Random.value;
@@ -245,19 +240,13 @@ public class Backpropagation : MonoBehaviour {
 				weightHO[h,o] = UnityEngine.Random.value;
 	}
 	
-	/*
-	 *  action()
-	 *
-	 *  Select an action using winner-takes-all network strategy.
-	 *
-	 */
-	public string action(float[] vec){	
+	public string action(float[] vec){							//Функция вызываемая quadPhysics.cs
 		inputs[0] = vec[0];
 		inputs[1] = vec[1];
 		inputs[2] = vec[2];
 		inputs[3] = vec[3];	
 		
-		feedForward();
+/* 		feedForward();
 		
 		int index = 0;
 		
@@ -268,13 +257,54 @@ public class Backpropagation : MonoBehaviour {
 				max = vec[i];
 				index = i;
 			}
+		} */
+		
+		
+		int index = 0;
+		int i = 0;
+		RecordCount = 1;
+		i = -1;
+		
+		int iterations=0,MaxSamples=RecordCount;
+		
+		while(true){
+			if (++i == MaxSamples)
+				i = 0;
+			//Debug.Log(iterations + " " + i + " " + samples[i].health);
+/* 			inputs[0] = vec[0];
+			inputs[1] = vec[1];
+			inputs[2] = vec[2];
+			inputs[3] = vec[3];	 */
+			Debug.Log("inputs: [0] " + inputs[0]);
+			
+			targets[0] = -0.7f;
+			targets[1] = 0.0f;
+			targets[2] = 0.0f;
+			targets[3] = 0.7f;
+			Debug.Log("targets: [0] " + targets[0]);
+			
+			feedForward();
+			
+			float err = 0.0f;
+			for (int j=0; j<OutputNeurons; j++)
+				err += Mathf.Pow(samples[i].output[j]-outputs[j],2);
+			Debug.Log("err: " + err);
+			
+			
+			err = (float)0.5*err;
+			//Debug.Log("mse="+err);
+			if (iterations++ > 200)
+				break;
+			backPropagate();
+			Debug.Log("backPropagate inputs: [0] " + inputs[0] + " [1] " + inputs[1] + " [2] " + inputs[2] + " [3] " + inputs[3] );
 		}
 		/*
 		foreach (float o in outputs)
 			print(o);
 		Debug.Log("Max:"+max);
 		*/
-		return (commands[index]);
+		return (commands[index]);								//Возврат следующего действия
+		//return (commands[index]);								//Возврат следующего действия
 	}
 
 

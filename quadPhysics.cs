@@ -111,13 +111,47 @@ public class quadPhysics : MonoBehaviour
 		Destroy(gameObject);
 
 
+		/* float dt = Time.deltaTime * 1;
+		
+		Vector4 inputs = controller.getInputs (transform.position, xdot, theta, thetadot);
+		lastInput = inputs;
+		
+		omega = thetadot2omega (thetadot, theta);
+		omegadot = angular_acceleration (inputs);
+		Vector3 acc = acceleration (inputs, omega);
 
+		omega += omegadot * dt;
+		thetadot = omega2thetadot (omega, theta);
+		theta += thetadot * dt;
+		xdot += acc * dt;
+		transform.position += xdot * dt;
+		transform.rotation = Quaternion.Euler (theta * 360 / 6.28f);
+		
+		transform.Rotate (new Vector3(-90, 0, 0));
+		
+		// visual thrust indicators update
+		float scale = 0.01f;
+		lrEngine1.SetPosition (1, new Vector3 (0, 0, inputs [0] * scale));
+		lrEngine2.SetPosition (1, new Vector3 (0, 0, inputs [1] * scale));
+		lrEngine3.SetPosition (1, new Vector3 (0, 0, inputs [2] * scale));
+		lrEngine4.SetPosition (1, new Vector3 (0, 0, inputs [3] * scale)); */
 
+if (Input.GetKeyDown (KeyCode.U)) 
+ transform.Rotate (new Vector3 (0, 5, 0));
+
+if (Input.GetKeyDown (KeyCode.I)) 
+ transform.Rotate (new Vector3 (0, -5, 0));
+ 
+ if (Input.GetKeyDown (KeyCode.O)) 
+ transform.Rotate (new Vector3 (0, 0, -5));
+ 
+ if (Input.GetKeyDown (KeyCode.P)) 
+ transform.Rotate (new Vector3 (0, 0, 5));
+ 
 		if (Input.GetKeyDown (KeyCode.X)) {
-			transform.Rotate (new Vector3 (25, 0, 0));
-				}
-
-		string cmd = bp.action (new float[4]{LifeValue,HaveKnife,HaveGun,BulletAmount});
+			//transform.Rotate (new Vector3 (25, 0, 0));
+			Debug.Log("transform.rotation: [0] " + transform.rotation[0] + " [1] " + transform.rotation[1] + " [2] " + transform.rotation[2] + " [3] " + transform.rotation[3]);
+			string cmd = bp.action (new float[4]{transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]});
 		switch(cmd){
 		case "A":
 			//transform.Rotate (new Vector3 (5, 0, 0));
@@ -128,17 +162,17 @@ public class quadPhysics : MonoBehaviour
 //			
 //			BulletAmount = 0.0f;
 
-//			Debug.Log("a");
+			Debug.Log("a");
 			break;
 		case "B":
 			transform.Rotate (new Vector3 (0, 5, 0));
-//			Debug.Log("b");
+			
 //			LifeValue = 1.0f;
 //			HaveKnife = 0.0f;
 //			HaveGun = 0.0f;
 //			
 //			BulletAmount = 2.0f;
-
+			Debug.Log("b");
 			break;
 		case "C":
 			transform.Rotate (new Vector3 (0, -5, 0));
@@ -158,9 +192,13 @@ public class quadPhysics : MonoBehaviour
 //			BulletAmount = 0.0f;
 
 
-//			Debug.Log("d");
+			Debug.Log("d");
 			break;	
 		}
+			
+				}
+
+		
 
 
 		if (Input.GetKeyDown (KeyCode.R)) {
@@ -287,10 +325,10 @@ public class quadPhysics : MonoBehaviour
 	{
 		Matrix4x4 m = new Matrix4x4 ();
 		
-//		m.SetRow (0, new Vector4 (a11, a12, a13, 0));
-//		m.SetRow (1, new Vector4 (a21, a22, a23, 0));
-//		m.SetRow (2, new Vector4 (a31, a32, a33, 0));
-//		m.SetRow (3, new Vector4 (0, 0, 0, 1));
+		m.SetRow (0, new Vector4 (a11, a12, a13, 0));
+		m.SetRow (1, new Vector4 (a21, a22, a23, 0));
+		m.SetRow (2, new Vector4 (a31, a32, a33, 0));
+		m.SetRow (3, new Vector4 (0, 0, 0, 1));
 		
 		return m;
 	}
