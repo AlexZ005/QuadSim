@@ -44,10 +44,11 @@ public class quadPhysics : MonoBehaviour
 	private LineRenderer lrEngine4;
 	
 	string  fileName = "Assets/sample-data.txt";
-	System.IO.StreamWriter sr = new System.IO.StreamWriter("test");
+	
 	
 	void StartFile(double q1,double q2,double q3,double q4,double i1,double i2,double i3,double i4)		//для записи входных и выходных параметров при включенном PID
 	{
+	System.IO.StreamWriter sr = new System.IO.StreamWriter("test");	//better to move two lines up, but you will get shared violation path error!
 		if (System.IO.File.Exists(fileName))
 		{
 		  //Debug.Log(fileName+" already exists.");
@@ -184,13 +185,18 @@ if (Input.GetKeyDown (KeyCode.H)) {
 	}
 
 
-	//ONLY FOR WRITING sample-data
+	//STEP1: ONLY FOR WRITING sample-data
 //if (transform.rotation[1] != 0)
 //StartFile(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3],lastInput[0]/10000,lastInput[1]/10000,lastInput[2]/10000,lastInput[3]/10000);
-	
-if (Input.GetKeyDown (KeyCode.U)) {
+
+
+	//STEP2: USE ONLY AFTER feedForward computation
 ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); //взять следующие данные, которые посчитала нейронная сеть
-Debug.Log("Test ans: [0] " + ans[0]*10000 + " [1] " + ans[1]*10000 + " [2] " + ans[2]*10000 + " [3] " + ans[3]*10000);		//вероятнее всего это будет надо подавать на квадрокоптер
+Debug.Log("Test ans: [0] " + ans[0]*10000 + " [1] " + ans[1]*10000 + " [2] " + ans[2]*10000 + " [3] " + ans[3]*10000);		//вероятнее всего это будет надо подавать на квадрокоптер	
+
+
+if (Input.GetKeyDown (KeyCode.U)) {
+
 //transform.Rotate (new Vector3 (0, 5, 0));
 }
 

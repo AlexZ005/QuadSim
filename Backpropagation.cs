@@ -33,7 +33,7 @@ public class Backpropagation : MonoBehaviour {
 	private float[,] weightIH,weightHO;
 	private float[] inputs,hiddens,outputs,targets;
 	private float[] erro,errh;
-	private Sample[] samples = new Sample[50];
+	private Sample[] samples = new Sample[557];
 	
 	private string[] commands = new string[4]{"A","B","C","D"};
 	
@@ -220,51 +220,100 @@ public class Backpropagation : MonoBehaviour {
 	 * 
 	 */
 	void training(){
+	
+	
+		int iterations=0;
+		float err = 0.0f;
+		int tutu = 0;
+	do {
 		StreamReader reader = (new FileInfo("Assets/sample-data.txt")).OpenText();
 		
 		//Read the training dataset
 		string text = reader.ReadLine();
 
-		int i = 0;
+	int i = 0;	
+		
+		
 		while(text!=null){
 			string[] result = text.Split(new char[]{','});
+			//Debug.Log (result[0] + " " + result[1] + " " + result[2] + " " + result[3] + " " + result[4] + " " + result[5] + " " + result[6] + " " + result[7]);
 			samples[i++] = new Sample(result);
 			text = reader.ReadLine();
 			//Debug.Log (text);
-
-		}
-		reader.Close();
-		RecordCount = i;
-		i = -1;
-		
-		int iterations=0,MaxSamples=RecordCount;
-		
-		while(true){
-			if (++i == MaxSamples)
-				i = 0;
-			//Debug.Log(iterations + " " + i + " " + samples[i].health);
-			inputs[0] = samples[i].health;
-			inputs[1] = samples[i].knife;
-			inputs[2] = samples[i].gun;
-			inputs[3] = samples[i].enemy;
 			
-			targets[0] = samples[i].output[0];
-			targets[1] = samples[i].output[1];
-			targets[2] = samples[i].output[2];
-			targets[3] = samples[i].output[3];
+			
+			
+			//while(err > 0.050) {
+			
+			
+			inputs[0] = Convert.ToSingle(result[0]);
+			inputs[1] = Convert.ToSingle(result[1]);
+			inputs[2] = Convert.ToSingle(result[2]);
+			inputs[3] = Convert.ToSingle(result[3]);
+			
+			targets[0] = Convert.ToSingle(result[4]);
+			targets[1] = Convert.ToSingle(result[5]);
+			targets[2] = Convert.ToSingle(result[6]);
+			targets[3] = Convert.ToSingle(result[7]);
 
 			feedForward();
 			
-			float err = 0.0f;
 			for (int j=0; j<OutputNeurons; j++)
-				err += Mathf.Pow(samples[i].output[j]-outputs[j],2);
+				err += Mathf.Pow(targets[j]-outputs[j],2);
 			
 			err = (float)0.5*err;
-			Debug.Log("mse="+err);
-			if (iterations++ > 200)
-				break;
+			
 			backPropagate();
-		}		
+			i=0;
+			
+			iterations++;
+			//if (iterations++ > 2000)
+			//	break;
+			//}
+		}
+
+				
+		reader.Close();
+		RecordCount = i;
+		i = -1;
+		tutu++;
+		Debug.Log(iterations + " mse="+err);
+		} while (tutu < 3);
+
+		
+//		int iterations=0,MaxSamples=RecordCount;
+		
+		// while(true){
+			// if (++i == MaxSamples)
+				// i = 0;
+			// //Debug.Log(iterations + " " + i + " " + samples[i].health);
+			// inputs[0] = samples[i].health;
+			// inputs[1] = samples[i].knife;
+			// inputs[2] = samples[i].gun;
+			// inputs[3] = samples[i].enemy;
+			
+			// targets[0] = samples[i].output[0];
+			// targets[1] = samples[i].output[1];
+			// targets[2] = samples[i].output[2];
+			// targets[3] = samples[i].output[3];
+
+			// feedForward();
+			
+			// float err = 0.0f;
+			// for (int j=0; j<OutputNeurons; j++)
+				// err += Mathf.Pow(samples[i].output[j]-outputs[j],2);
+			
+			// err = (float)0.5*err;
+			// if (err < 2)							//wait until error is minimal!
+			// break;
+			// Debug.Log("mse="+err);
+			// if (iterations++ > 200)
+			// {
+				// Debug.Log("Weights calculated for the sample-data");
+				// break;
+			// }
+			// backPropagate();
+		// }		
 	}
 	
 
@@ -335,7 +384,7 @@ public class Backpropagation : MonoBehaviour {
 			
 			
 			err = (float)0.5*err;
-			//Debug.Log("mse="+err);
+			Debug.Log("mse="+err);
 			//Debug.Log("mse="+err);
 			if (iterations++ > 20)
 				break;
