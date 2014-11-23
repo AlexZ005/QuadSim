@@ -111,7 +111,7 @@ public class quadPhysics : MonoBehaviour
 		Destroy(gameObject);
 
 
-		/* float dt = Time.deltaTime * 1;
+		float dt = Time.deltaTime * 1;
 		
 		Vector4 inputs = controller.getInputs (transform.position, xdot, theta, thetadot);
 		lastInput = inputs;
@@ -134,8 +134,16 @@ public class quadPhysics : MonoBehaviour
 		lrEngine1.SetPosition (1, new Vector3 (0, 0, inputs [0] * scale));
 		lrEngine2.SetPosition (1, new Vector3 (0, 0, inputs [1] * scale));
 		lrEngine3.SetPosition (1, new Vector3 (0, 0, inputs [2] * scale));
-		lrEngine4.SetPosition (1, new Vector3 (0, 0, inputs [3] * scale)); */
+		lrEngine4.SetPosition (1, new Vector3 (0, 0, inputs [3] * scale));
 
+if (Input.GetKeyDown (KeyCode.G)) 
+	theta = Random.insideUnitSphere;
+
+if (Input.GetKeyDown (KeyCode.H)) {
+	//theta = new Vector3(0,1,0);
+	theta[1] += 1;
+	}
+		
 if (Input.GetKeyDown (KeyCode.U)) 
  transform.Rotate (new Vector3 (0, 5, 0));
 
@@ -150,12 +158,14 @@ if (Input.GetKeyDown (KeyCode.I))
  
 		if (Input.GetKeyDown (KeyCode.X)) {
 			//transform.Rotate (new Vector3 (25, 0, 0));
-			Debug.Log("transform.rotation: [0] " + transform.rotation[0] + " [1] " + transform.rotation[1] + " [2] " + transform.rotation[2] + " [3] " + transform.rotation[3]);
-			string cmd = bp.action (new float[4]{transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]});
+			//Debug.Log("transform.rotation: [0] " + transform.rotation[0] + " [1] " + transform.rotation[1] + " [2] " + transform.rotation[2] + " [3] " + transform.rotation[3]);
+			//string cmd = bp.action (new float[4]{transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]});
+			Debug.Log("theta: " + theta.ToString());
+			string cmd = bp.action (new float[3]{theta[0],theta[1],theta[2]});
 		switch(cmd){
 		case "A":
 			//transform.Rotate (new Vector3 (5, 0, 0));
-
+			transform.Rotate (new Vector3 (0, 5, 0));
 //			LifeValue = 0.0f;
 //			HaveKnife = 1.0f;
 //			HaveGun = 1.0f;
@@ -165,7 +175,7 @@ if (Input.GetKeyDown (KeyCode.I))
 			Debug.Log("a");
 			break;
 		case "B":
-			transform.Rotate (new Vector3 (0, 5, 0));
+			transform.Rotate (new Vector3 (0, -5, 0));
 			
 //			LifeValue = 1.0f;
 //			HaveKnife = 0.0f;
@@ -175,7 +185,7 @@ if (Input.GetKeyDown (KeyCode.I))
 			Debug.Log("b");
 			break;
 		case "C":
-			transform.Rotate (new Vector3 (0, -5, 0));
+			transform.Rotate (new Vector3 (5, 0, 0));
 //			LifeValue = 0.0f;
 //			HaveKnife = 0.0f;
 //			HaveGun = 0.0f;
@@ -184,7 +194,7 @@ if (Input.GetKeyDown (KeyCode.I))
 			Debug.Log("c");
 			break;
 		case "D":
-			transform.Rotate (new Vector3 (0, 0, 5));
+			transform.Rotate (new Vector3 (-5, 0, 0));
 //			LifeValue = 0.0f;
 //			HaveKnife = 0.0f;
 //			HaveGun = 0.0f;
@@ -325,10 +335,10 @@ if (Input.GetKeyDown (KeyCode.I))
 	{
 		Matrix4x4 m = new Matrix4x4 ();
 		
-		m.SetRow (0, new Vector4 (a11, a12, a13, 0));
-		m.SetRow (1, new Vector4 (a21, a22, a23, 0));
-		m.SetRow (2, new Vector4 (a31, a32, a33, 0));
-		m.SetRow (3, new Vector4 (0, 0, 0, 1));
+		// m.SetRow (0, new Vector4 (a11, a12, a13, 0));
+		// m.SetRow (1, new Vector4 (a21, a22, a23, 0));
+		// m.SetRow (2, new Vector4 (a31, a32, a33, 0));
+		// m.SetRow (3, new Vector4 (0, 0, 0, 1));
 		
 		return m;
 	}

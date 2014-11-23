@@ -22,7 +22,8 @@ public class Sample{
 
 public class Backpropagation : MonoBehaviour {
 	
-	public int InputNeurons = 4;									//Входящие нейроны
+	//public int InputNeurons = 4;
+	public int InputNeurons = 3;									//Входящие нейроны
 	public int OutputNeurons = 4;
 	public int HiddenNeurons = 3;
 	public float LearnRate = 0.2f;
@@ -79,7 +80,7 @@ public class Backpropagation : MonoBehaviour {
 	 *
 	 */
 	float sigmoidDerivative(double val){
-		return (float)(val*(1.0 - val));
+		return (float)((1/2)*(1+val)*(1.0 - val));				//производная
 	}
 	
 	/*
@@ -95,7 +96,7 @@ public class Backpropagation : MonoBehaviour {
 		for (h = 0; h < HiddenNeurons; h++){
 			sum = 0.0;
 			for (i = 0; i< InputNeurons; i++)
-				sum += inputs[i]*weightIH[i,h];
+				sum += inputs[i]*weightIH[i,h];				//Для каждого элемента скрытого слоя vj находится входной сигнал 
 			//Debug.Log(hiddens[h]);
 			/* Add in Bias */
 			sum += weightIH[InputNeurons,h];
@@ -105,7 +106,7 @@ public class Backpropagation : MonoBehaviour {
 		for (o = 0; o < OutputNeurons; o++){
 			sum = 0.0;
 			for (h =0; h < HiddenNeurons; h++)
-				sum += hiddens[h] * weightHO[h,o];
+				sum += hiddens[h] * weightHO[h,o];		//Для каждого элемента скрытого слоя yk находится входной сигнал 
 			
 			/* Add in Bias */
 			sum += weightHO[HiddenNeurons,o];
@@ -124,14 +125,14 @@ public class Backpropagation : MonoBehaviour {
 		int h,i,o;
 		/* Calculate the output layer error (step 3 for output cell) */
 		for (o =0; o < OutputNeurons; o ++)
-			erro[o] = (targets[o]-outputs[o])*sigmoidDerivative(outputs[o]);
-		
+			erro[o] = (targets[o]-outputs[o])*sigmoidDerivative(outputs[o]);		// Каждый выходной элемент Yl получает образец правильного ответа 
+																											// dl и вычисляется корректирующий коэффициент
 		/* Calculate the hidden layer error (step 3 for hidden cell) */
 		for (h = 0; h < HiddenNeurons; h++){
 			errh[h]= 0.0f;
 			for ( o = 0; o<OutputNeurons; o++)
-				errh[h] += erro[o]*weightHO[h,o];
-			
+				errh[h] += erro[o]*weightHO[h,o];												// Для каждого скрытого элемента vj 
+																											// подсчитываем корректирующий входной коэффициент		
 			errh[h] *= sigmoidDerivative(hiddens[h]);
 		}
 		
@@ -244,7 +245,12 @@ public class Backpropagation : MonoBehaviour {
 		inputs[0] = vec[0];
 		inputs[1] = vec[1];
 		inputs[2] = vec[2];
-		inputs[3] = vec[3];	
+		//inputs[3] = vec[3];	
+		
+		targets[0] = -0.7f;
+		targets[1] = 0.0f;
+		targets[2] = 0.0f;
+		targets[3] = 0.7f;
 		
 /* 		feedForward();
 		
@@ -275,35 +281,36 @@ public class Backpropagation : MonoBehaviour {
 			inputs[1] = vec[1];
 			inputs[2] = vec[2];
 			inputs[3] = vec[3];	 */
-			Debug.Log("inputs: [0] " + inputs[0]);
+			//Debug.Log("inputs: [0] " + inputs[0]);
 			
-			targets[0] = -0.7f;
-			targets[1] = 0.0f;
-			targets[2] = 0.0f;
-			targets[3] = 0.7f;
+
 			Debug.Log("targets: [0] " + targets[0]);
 			
 			feedForward();
 			
 			float err = 0.0f;
-			for (int j=0; j<OutputNeurons; j++)
-				err += Mathf.Pow(samples[i].output[j]-outputs[j],2);
-			Debug.Log("err: " + err);
+			for (int j=0; j<OutputNeurons; j++){
+				err += Mathf.Pow(targets[j]-outputs[j],2);
+				Debug.Log("NN output: " + outputs[j]);
+				}
+				//err += Mathf.Pow(samples[i].output[j]-outputs[j],2);
+			//Debug.Log("err: " + err);
 			
 			
 			err = (float)0.5*err;
+			Debug.Log("mse="+err);
 			//Debug.Log("mse="+err);
-			if (iterations++ > 200)
+			if (iterations++ > 20)
 				break;
 			backPropagate();
-			Debug.Log("backPropagate inputs: [0] " + inputs[0] + " [1] " + inputs[1] + " [2] " + inputs[2] + " [3] " + inputs[3] );
+			//Debug.Log("backPropagate inputs: [0] " + inputs[0] + " [1] " + inputs[1] + " [2] " + inputs[2] + " [3] " + inputs[3] );
 		}
 		/*
 		foreach (float o in outputs)
 			print(o);
 		Debug.Log("Max:"+max);
 		*/
-		return (commands[index]);								//Возврат следующего действия
+		return (commands[index]);									//Возврат следующего действия
 		//return (commands[index]);								//Возврат следующего действия
 	}
 
