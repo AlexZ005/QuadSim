@@ -1,9 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+
+
 public class quadPhysics : MonoBehaviour
 {
 	private Backpropagation bp = null;
+	
+	public float[] ans = new float[4]; 
 	
 	public float LifeValue = 2.0f;
 	public float HaveKnife = 1.0f;
@@ -38,6 +42,30 @@ public class quadPhysics : MonoBehaviour
 	private LineRenderer lrEngine2;
 	private LineRenderer lrEngine3;
 	private LineRenderer lrEngine4;
+	
+	string  fileName = "Assets/sample-data.txt";
+	System.IO.StreamWriter sr = new System.IO.StreamWriter("test");
+	
+	void StartFile(double q1,double q2,double q3,double q4,double i1,double i2,double i3,double i4)		//для записи входных и выходных параметров при включенном PID
+	{
+		if (System.IO.File.Exists(fileName))
+		{
+		  //Debug.Log(fileName+" already exists.");
+		   //return;
+		 }
+		 
+			 sr = System.IO.File.AppendText(fileName);
+		   
+		  
+		  
+		 
+		  sr.WriteLine (q1 + "," + q2 + "," + q3 + "," + q4 + "," + i1 + "," + i2 + "," + i3 + "," + i4);
+		  //sr.WriteLine ("I can write ints {0} or floats {1}, and so on.",1, 4.2);
+		  sr.Close();
+	}
+	
+		
+	
 	
 	// Use this for initialization
 	private void Start ()
@@ -113,8 +141,19 @@ public class quadPhysics : MonoBehaviour
 
 		float dt = Time.deltaTime * 1;
 		
-		Vector4 inputs = controller.getInputs (transform.position, xdot, theta, thetadot);
-		lastInput = inputs;
+		
+		//Uncomment to get back normal inputs
+		//Vector4 inputs = controller.getInputs (transform.position, xdot, theta, thetadot);
+		//lastInput = inputs;
+		
+		
+		//The following 5 lines are used for putting speeds to the rotors which comes from neural network
+		Vector4 inputs = new Vector4();
+		inputs[0] = ans[0];
+		inputs[1] = -ans[1];
+		inputs[2] = ans[2];
+		inputs[3] = -ans[3];
+		
 		
 		omega = thetadot2omega (thetadot, theta);
 		omegadot = angular_acceleration (inputs);
@@ -143,12 +182,24 @@ if (Input.GetKeyDown (KeyCode.H)) {
 	//theta = new Vector3(0,1,0);
 	theta[1] += 1;
 	}
-		
-if (Input.GetKeyDown (KeyCode.U)) 
- transform.Rotate (new Vector3 (0, 5, 0));
 
-if (Input.GetKeyDown (KeyCode.I)) 
- transform.Rotate (new Vector3 (0, -5, 0));
+
+	//ONLY FOR WRITING sample-data
+//if (transform.rotation[1] != 0)
+//StartFile(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3],lastInput[0]/10000,lastInput[1]/10000,lastInput[2]/10000,lastInput[3]/10000);
+	
+if (Input.GetKeyDown (KeyCode.U)) {
+ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); //взять следующие данные, которые посчитала нейронная сеть
+Debug.Log("Test ans: [0] " + ans[0]*10000 + " [1] " + ans[1]*10000 + " [2] " + ans[2]*10000 + " [3] " + ans[3]*10000);		//вероятнее всего это будет надо подавать на квадрокоптер
+//transform.Rotate (new Vector3 (0, 5, 0));
+}
+
+if (Input.GetKeyDown (KeyCode.I)) {
+
+//Debug.Log(rpm);	//gives zeros, because that is an empty Vector4
+//rpm = new Vector4(1000,1000,500,1000);
+ //transform.Rotate (new Vector3 (0, -5, 0));
+ }
  
  if (Input.GetKeyDown (KeyCode.O)) 
  transform.Rotate (new Vector3 (0, 0, -5));
@@ -156,9 +207,12 @@ if (Input.GetKeyDown (KeyCode.I))
  if (Input.GetKeyDown (KeyCode.P)) 
  transform.Rotate (new Vector3 (0, 0, 5));
  
+ //Debug.Log("transform.rotation: [0] " + transform.rotation[0] + " [1] " + transform.rotation[1] + " [2] " + transform.rotation[2] + " [3] " + transform.rotation[3]);
+ //Debug.Log("lastInput: [0] " + lastInput[0] + " [1] " + lastInput[1] + " [2] " + lastInput[2] + " [3] " + lastInput[3]);
+ 
 		if (Input.GetKeyDown (KeyCode.X)) {
 			//transform.Rotate (new Vector3 (25, 0, 0));
-			//Debug.Log("transform.rotation: [0] " + transform.rotation[0] + " [1] " + transform.rotation[1] + " [2] " + transform.rotation[2] + " [3] " + transform.rotation[3]);
+			 
 			//string cmd = bp.action (new float[4]{transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]});
 			Debug.Log("theta: " + theta.ToString());
 			string cmd = bp.action (new float[3]{theta[0],theta[1],theta[2]});
@@ -265,6 +319,9 @@ if (Input.GetKeyDown (KeyCode.I))
 
 	private Vector3 acceleration (Vector4 inputs, Vector3 omega)
 	{
+		Debug.Log("inputs: " + inputs);
+		
+		//inputs[2] += inputs[2]+200;					//funny ... just fly away
 		Vector3 gravity = new Vector3 (0, -g, 0);
 		Vector3 rot = transform.rotation * Vector3.forward * 6.28f / 360;
 		
@@ -335,10 +392,10 @@ if (Input.GetKeyDown (KeyCode.I))
 	{
 		Matrix4x4 m = new Matrix4x4 ();
 		
-		// m.SetRow (0, new Vector4 (a11, a12, a13, 0));
-		// m.SetRow (1, new Vector4 (a21, a22, a23, 0));
-		// m.SetRow (2, new Vector4 (a31, a32, a33, 0));
-		// m.SetRow (3, new Vector4 (0, 0, 0, 1));
+		 m.SetRow (0, new Vector4 (a11, a12, a13, 0));
+		 m.SetRow (1, new Vector4 (a21, a22, a23, 0));
+		 m.SetRow (2, new Vector4 (a31, a32, a33, 0));
+		 m.SetRow (3, new Vector4 (0, 0, 0, 1));
 		
 		return m;
 	}

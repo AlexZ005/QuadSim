@@ -23,7 +23,7 @@ public class Sample{
 public class Backpropagation : MonoBehaviour {
 	
 	//public int InputNeurons = 4;
-	public int InputNeurons = 3;									//Входящие нейроны
+	public int InputNeurons = 4;									//Входящие нейроны
 	public int OutputNeurons = 4;
 	public int HiddenNeurons = 3;
 	public float LearnRate = 0.2f;
@@ -54,8 +54,8 @@ public class Backpropagation : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		tranning();		
-		test ();
+		training();		
+		//test ();
 	}
 	
 	// Update is called once per frame
@@ -114,6 +114,43 @@ public class Backpropagation : MonoBehaviour {
 		}		
 		
 	}
+
+		public float[] feedForwardContinue(float a, float b, float c, float d){							//feedForward для получения выходных параметров, которые потом применяются для квадкоптера
+		int i,h,o;
+		
+		float[] inin = new float[4]; 
+		inin[0]=a;
+		inin[1]=b;
+		inin[2]=c;
+		inin[3]=d;
+		
+		double sum;
+		 /* Calculate input to hidden layer */
+		for (h = 0; h < HiddenNeurons; h++){
+			sum = 0.0;
+			for (i = 0; i< InputNeurons; i++)
+				sum += inin[i]*weightIH[i,h];				//Для каждого элемента скрытого слоя vj находится входной сигнал 
+			//Debug.Log(hiddens[h]);
+			/* Add in Bias */
+			sum += weightIH[InputNeurons,h];
+			hiddens[h] = sigmoid(sum);
+		}
+		/* Calculate the hidden to output layer */
+		for (o = 0; o < OutputNeurons; o++){
+			sum = 0.0;
+			for (h =0; h < HiddenNeurons; h++)
+				sum += hiddens[h] * weightHO[h,o];		//Для каждого элемента скрытого слоя yk находится входной сигнал 
+			
+			/* Add in Bias */
+			sum += weightHO[HiddenNeurons,o];
+			outputs[o] = sigmoid(sum);
+		}
+			return outputs;
+			
+	}
+	
+	
+	
 	
 	/*
 	 *  backPropagate()
@@ -182,8 +219,8 @@ public class Backpropagation : MonoBehaviour {
 	 *  Read training dataset and training the weight of networks.
 	 * 
 	 */
-	void tranning(){
-		StreamReader reader = (new FileInfo("Assets/TrainingDataSet.txt")).OpenText();
+	void training(){
+		StreamReader reader = (new FileInfo("Assets/sample-data.txt")).OpenText();
 		
 		//Read the training dataset
 		string text = reader.ReadLine();
@@ -223,7 +260,7 @@ public class Backpropagation : MonoBehaviour {
 				err += Mathf.Pow(samples[i].output[j]-outputs[j],2);
 			
 			err = (float)0.5*err;
-			//Debug.Log("mse="+err);
+			Debug.Log("mse="+err);
 			if (iterations++ > 200)
 				break;
 			backPropagate();
@@ -284,7 +321,7 @@ public class Backpropagation : MonoBehaviour {
 			//Debug.Log("inputs: [0] " + inputs[0]);
 			
 
-			Debug.Log("targets: [0] " + targets[0]);
+			//Debug.Log("targets: [0] " + targets[0]);
 			
 			feedForward();
 			
@@ -298,7 +335,7 @@ public class Backpropagation : MonoBehaviour {
 			
 			
 			err = (float)0.5*err;
-			Debug.Log("mse="+err);
+			//Debug.Log("mse="+err);
 			//Debug.Log("mse="+err);
 			if (iterations++ > 20)
 				break;

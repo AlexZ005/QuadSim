@@ -32,7 +32,8 @@ public class pdController : MonoBehaviour, IQuadController {
 		
 		// total thrust
 		float thrust = quadcopter.m * quadcopter.g / (quadcopter.k * Mathf.Cos (theta[0]) * Mathf.Cos (theta[1]));
-		
+		//float thrust = quadcopter.m / (quadcopter.k * Mathf.Cos (theta[0]) * Mathf.Cos (theta[1])); //funny, like in a space
+		//Debug.Log("Thrust : " + thrust + " theta[0]: " + theta[0]);
 		// compute error
 		Vector3 err = kd * thetadot + kp * theta;
 		
@@ -54,9 +55,9 @@ public class pdController : MonoBehaviour, IQuadController {
 		float Ix = quadcopter.i [0, 0],
 			Iy = quadcopter.i [1, 1],
 			Iz = quadcopter.i [2, 2];
-		
+		//Debug.Log(thrust / 4 - (2 * quadcopter.b * error [0] * Ix + error [2] * Iz * quadcopter.k * quadcopter.l) / (4 * quadcopter.b * quadcopter.k * quadcopter.l));
 		return new Vector4 (
-			thrust / 4 - (2 * quadcopter.b * error [0] * Ix + error [2] * Iz * quadcopter.k * quadcopter.l) / (4 * quadcopter.b * quadcopter.k * quadcopter.l),
+			thrust / 4 - (2 * quadcopter.b * error [0] * Ix + error [2] * Iz * quadcopter.k * quadcopter.l) / (4 * quadcopter.b * quadcopter.k * quadcopter.l),		//funny if you will place 1000
 			thrust / 4 + error [2] * Iz / (4 * quadcopter.b) - (error [1] * Iy) / (2 * quadcopter.k * quadcopter.l),
 			thrust / 4 - (-2 * quadcopter.b * error [0] * Ix + error [2] * Iz * quadcopter.k * quadcopter.l) / (4 * quadcopter.b * quadcopter.k * quadcopter.l),
 			thrust / 4 + error [2] * Iz / (4 * quadcopter.b) + (error [1] * Iy) / (2 * quadcopter.k * quadcopter.l));
