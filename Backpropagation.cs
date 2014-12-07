@@ -220,20 +220,13 @@ public class Backpropagation : MonoBehaviour {
 	 * 
 	 */
 	void training(){
-	
-	
-		int iterations=0;
-		float err = 0.0f;
-		int tutu = 0;
-	do {
 		StreamReader reader = (new FileInfo("Assets/sample-data.txt")).OpenText();
 		
 		//Read the training dataset
 		string text = reader.ReadLine();
 
-	int i = 0;	
-		
-		
+		int i = 0;
+		int iterations_internal=0;
 		while(text!=null){
 			string[] result = text.Split(new char[]{','});
 			//Debug.Log (result[0] + " " + result[1] + " " + result[2] + " " + result[3] + " " + result[4] + " " + result[5] + " " + result[6] + " " + result[7]);
@@ -242,8 +235,12 @@ public class Backpropagation : MonoBehaviour {
 			//Debug.Log (text);
 			
 			
+			float err = 0.0f;
+			//
+			//err = 0.0f;
+			int iterations=0;
 			
-			//while(err > 0.050) {
+			do {
 			
 			
 			inputs[0] = Convert.ToSingle(result[0]);
@@ -261,25 +258,27 @@ public class Backpropagation : MonoBehaviour {
 			for (int j=0; j<OutputNeurons; j++)
 				err += Mathf.Pow(targets[j]-outputs[j],2);
 			
+			Debug.Log("targ: " + targets[0] + " out: " + outputs[0]);	//targ: -0.02626049 out: 0.2640465
+			
 			err = (float)0.5*err;
 			
 			backPropagate();
 			i=0;
 			
 			iterations++;
-			//if (iterations++ > 2000)
-			//	break;
-			//}
+			iterations_internal++;
+			Debug.Log(iterations_internal + " " + iterations + " mse="+err);
+			if (iterations++ > 2)
+				break;
+			} while(err > 0.050);
+			Debug.Log(iterations_internal + " mse="+err);
+			
+			
+			
 		}
-
-				
 		reader.Close();
 		RecordCount = i;
 		i = -1;
-		tutu++;
-		Debug.Log(iterations + " mse="+err);
-		} while (tutu < 3);
-
 		
 //		int iterations=0,MaxSamples=RecordCount;
 		

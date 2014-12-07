@@ -8,6 +8,8 @@ public class quadPhysics : MonoBehaviour
 	private Backpropagation bp = null;
 	
 	public float[] ans = new float[4]; 
+	public float[] ans2 = new float[4]; 
+	public float[] ans_stable = new float[4]; 
 	
 	public float LifeValue = 2.0f;
 	public float HaveKnife = 1.0f;
@@ -82,6 +84,9 @@ public class quadPhysics : MonoBehaviour
 		float dt = Time.deltaTime * 1;
 		
 		Vector4 inputs = controller.getInputs (transform.position, xdot, theta, thetadot);
+		
+		
+		
 		lastInput = inputs;
 		
 		omega = thetadot2omega (thetadot, theta);
@@ -94,6 +99,14 @@ public class quadPhysics : MonoBehaviour
 		xdot += acc * dt;
 		transform.position += xdot * dt;
 		transform.rotation = Quaternion.Euler (theta * 360 / 6.28f);
+		
+		ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); //взять следующие данные, которые посчитала нейронная сеть
+		
+		ans_stable[0] = 0;
+		ans_stable[1] = 0;
+		ans_stable[2] = 0;
+		ans_stable[3] = 0;
+		
 		
 		transform.Rotate (new Vector3 (-90, 0, 0));
 		
@@ -144,17 +157,25 @@ public class quadPhysics : MonoBehaviour
 		
 		
 		//Uncomment to get back normal inputs
-		//Vector4 inputs = controller.getInputs (transform.position, xdot, theta, thetadot);
-		//lastInput = inputs;
+		Vector4 inputs = controller.getInputs (transform.position, xdot, theta, thetadot);
 		
 		
+		
+		//ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]);
 		//The following 5 lines are used for putting speeds to the rotors which comes from neural network
-		Vector4 inputs = new Vector4();
-		inputs[0] = ans[0];
-		inputs[1] = -ans[1];
-		inputs[2] = ans[2];
-		inputs[3] = -ans[3];
+		 // Vector4 inputs = new Vector4();
+		 // STABLE PASS
+		 // inputs[0] = ans_stable[0]*10000-ans[0]*10000;
+		 // inputs[1] = ans_stable[0]*10000-ans[0]*10000;
+		 // inputs[2] = ans_stable[0]*10000-ans[0]*10000;
+		 // inputs[3] = ans_stable[0]*10000-ans[0]*10000;
 		
+		 // inputs[0] = ans_stable[0]*10000-ans[0]*10000;
+		 // inputs[1] = ans_stable[1]*10000-ans[1]*10000;
+		 // inputs[2] = ans_stable[2]*10000-ans[2]*10000;
+		 // inputs[3] = ans_stable[3]*10000-ans[3]*10000;
+		
+		lastInput = inputs;
 		
 		omega = thetadot2omega (thetadot, theta);
 		omegadot = angular_acceleration (inputs);
@@ -167,7 +188,18 @@ public class quadPhysics : MonoBehaviour
 		transform.position += xdot * dt;
 		transform.rotation = Quaternion.Euler (theta * 360 / 6.28f);
 		
+		ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); //взять следующие данные, которые посчитала нейронная сеть
+		
+		if (ans_stable[0] == 0) {
+		ans_stable[0] = ans[0];
+		ans_stable[1] = ans[1];
+		ans_stable[2] = ans[2];
+		ans_stable[3] = ans[3];
+		}
+		
+		
 		transform.Rotate (new Vector3(-90, 0, 0));
+		
 		
 		// visual thrust indicators update
 		float scale = 0.01f;
@@ -190,18 +222,18 @@ if (Input.GetKeyDown (KeyCode.H)) {
 //StartFile(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3],lastInput[0]/10000,lastInput[1]/10000,lastInput[2]/10000,lastInput[3]/10000);
 
 
-	//STEP2: USE ONLY AFTER feedForward computation
-ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); //взять следующие данные, которые посчитала нейронная сеть
-Debug.Log("Test ans: [0] " + ans[0]*10000 + " [1] " + ans[1]*10000 + " [2] " + ans[2]*10000 + " [3] " + ans[3]*10000);		//вероятнее всего это будет надо подавать на квадрокоптер	
 
 
 if (Input.GetKeyDown (KeyCode.U)) {
+	//STEP2: USE ONLY AFTER feedForward computation
+ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); //взять следующие данные, которые посчитала нейронная сеть
+Debug.Log("Test ans: [0] " + ans[0]*10000 + " [1] " + ans[1]*10000 + " [2] " + ans[2]*10000 + " [3] " + ans[3]*10000);		//вероятнее всего это будет надо подавать на квадрокоптер	
 
 //transform.Rotate (new Vector3 (0, 5, 0));
 }
 
 if (Input.GetKeyDown (KeyCode.I)) {
-
+ConsoleLog.Instance.Log("Olala");
 //Debug.Log(rpm);	//gives zeros, because that is an empty Vector4
 //rpm = new Vector4(1000,1000,500,1000);
  //transform.Rotate (new Vector3 (0, -5, 0));
@@ -213,8 +245,15 @@ if (Input.GetKeyDown (KeyCode.I)) {
  if (Input.GetKeyDown (KeyCode.P)) 
  transform.Rotate (new Vector3 (0, 0, 5));
  
+ 
+ ans2[0] = ans_stable[0]*10000-ans[0]*10000;
+ ans2[1] = ans_stable[1]*10000-ans[1]*10000;
+ ans2[2] = ans_stable[2]*10000-ans[2]*10000;
+ ans2[3] = ans_stable[3]*10000-ans[3]*10000;
+ 
  //Debug.Log("transform.rotation: [0] " + transform.rotation[0] + " [1] " + transform.rotation[1] + " [2] " + transform.rotation[2] + " [3] " + transform.rotation[3]);
- //Debug.Log("lastInput: [0] " + lastInput[0] + " [1] " + lastInput[1] + " [2] " + lastInput[2] + " [3] " + lastInput[3]);
+ Debug.Log("lastInput: [0] " + lastInput[0] + " [1] " + lastInput[1] + " [2] " + lastInput[2] + " [3] " + lastInput[3]);
+ Debug.Log("lastanss: [0] " + ans2[0] + " [1] " + ans2[1] + " [2] " + ans2[2] + " [3] " + ans2[3]);
  
 		if (Input.GetKeyDown (KeyCode.X)) {
 			//transform.Rotate (new Vector3 (25, 0, 0));
@@ -301,7 +340,8 @@ if (Input.GetKeyDown (KeyCode.I)) {
 			"\n\ntheta:    " + theta.ToString () +
 			"\nthetadot: " + thetadot.ToString () + 
 			"\n\nrotation: " + transform.rotation.ToString () +
-			"\n\ninputs:\n   " + lastInput.ToString ());
+			"\n\ninputs:\n   " + lastInput.ToString () +
+			"\n\nns:\n   " + (ans_stable[0]*10000-ans[0]*10000));
 	}
 	
 	private Vector3 angular_acceleration (Vector4 inputs)
@@ -325,7 +365,7 @@ if (Input.GetKeyDown (KeyCode.I)) {
 
 	private Vector3 acceleration (Vector4 inputs, Vector3 omega)
 	{
-		Debug.Log("inputs: " + inputs);
+		//Debug.Log("inputs: " + inputs);				//inputs: (193.4, -193.4, 193.4, -193.4)
 		
 		//inputs[2] += inputs[2]+200;					//funny ... just fly away
 		Vector3 gravity = new Vector3 (0, -g, 0);
