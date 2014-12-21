@@ -17,8 +17,9 @@ public class Console : MonoBehaviour {
     }
 	
 	public string Help(params string[] args) {
-        return "save [filename]\t\t save the map\n" +
-            "load [filename]\t\t load the map\n" +
+        return "save [filename]\t\t save calculated hidden neurons\n" +
+            "load [filename]\t\t load hidden neurons\n" +
+			"start \t\t start this simulation\n" +
             "help\t\t\t show this command\n\n" +
 			"sr\t\t\t ShowResults";
     }
@@ -39,15 +40,18 @@ public class Console : MonoBehaviour {
         var filename = args[0];
 		float[] result = new float[4]; 
 		
-		ConsoleLog.Instance.Log("Instance [0] " + qp.transform.rotation[0]) ;
-		ConsoleLog.Instance.Log("Instance [1] " + qp.transform.rotation[1]);
-		ConsoleLog.Instance.Log("Instance [2] " + qp.transform.rotation[2]);
-		ConsoleLog.Instance.Log("Instance [3] " + qp.transform.rotation[3]);
+		ConsoleLog.Instance.Log("Rotation\n[0] " + qp.transform.rotation[0]) ;
+		ConsoleLog.Instance.Log("[1] " + qp.transform.rotation[1]);
+		ConsoleLog.Instance.Log("[2] " + qp.transform.rotation[2]);
+		ConsoleLog.Instance.Log("[3] " + qp.transform.rotation[3]);
+		ConsoleLog.Instance.Log(" ");
+		
+		
 		
 		result = bp.feedForwardContinue(qp.transform.rotation[0],qp.transform.rotation[1],qp.transform.rotation[2],qp.transform.rotation[3]);
 		
         //new LevelLoader().Load(filename);
-        return "\n\nLoaded " + result[0] + "\n[1] " + result[1] + "\n[2] " + result[2] + "\n[3] " + result[3]; //взять следующие данные, которые посчитала нейронная сеть
+        return "\n\nLoaded\n[0] " + result[0] + "\n[1] " + result[1] + "\n[2] " + result[2] + "\n[3] " + result[3]; //взять следующие данные, которые посчитала нейронная сеть
     }
 	
 	// Update is called once per frame

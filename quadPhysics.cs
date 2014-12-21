@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using Rapid.Tools;
 
 
 public class quadPhysics : MonoBehaviour
@@ -10,6 +10,7 @@ public class quadPhysics : MonoBehaviour
 	public float[] ans = new float[4]; 
 	public float[] ans2 = new float[4]; 
 	public float[] ans_stable = new float[4]; 
+	public float[] test3 = new float[4]; 
 	
 	public float LifeValue = 2.0f;
 	public float HaveKnife = 1.0f;
@@ -121,6 +122,26 @@ public class quadPhysics : MonoBehaviour
 		reset ();
 	}
 	
+	void Awake(){
+	Graph.Initialize();
+		
+		
+		// Just for fun, lets add a nice blue style:
+		Graph.Instance.AddStyle(
+			new GraphLogStyle("blue", new Color(0.5f, 0.5f, 1f), Color.cyan,
+				new []{new Color(0.5f, 0.2f, 0.92f,1f), new Color(0.2f, 0.1f, 0.86f, 1f)} )
+		);
+		
+		// Create a log using the style:
+		//		Graph.Instance.CreateLog("sin_cos", new []{"sin", "cos"}, "blue");
+	}
+	
+	void OnApplicationQuit()
+	{
+		// This will free up any memory that's been allocated and close all file streams etc.
+		Graph.Dispose();
+	}
+	
 	private void reset ()
 	{
 		k = 0.01f;
@@ -221,8 +242,10 @@ if (Input.GetKeyDown (KeyCode.H)) {
 //if (transform.rotation[1] != 0)
 //StartFile(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3],lastInput[0]/10000,lastInput[1]/10000,lastInput[2]/10000,lastInput[3]/10000);
 
-
-
+Graph.Log("sin_cos", Mathf.Sin(Time.time), Mathf.Cos(Time.time),(Mathf.Log(1 + Time.time) - Mathf.Log(1 - Time.time))/2);
+Graph.Log("PID", lastInput[0],lastInput[1],lastInput[2],lastInput[3]);
+ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); //взять следующие данные, которые посчитала нейронная сеть
+Graph.Log("BackProp", ans[0],ans[1],ans[2],ans[3]);
 
 if (Input.GetKeyDown (KeyCode.U)) {
 	//STEP2: USE ONLY AFTER feedForward computation
@@ -233,7 +256,25 @@ Debug.Log("Test ans: [0] " + ans[0]*10000 + " [1] " + ans[1]*10000 + " [2] " + a
 }
 
 if (Input.GetKeyDown (KeyCode.I)) {
-ConsoleLog.Instance.Log("Olala");
+//ConsoleLog.Instance.Log("Olala");
+ ConsoleLog.Instance.Log("PID Speed\t\t[0] " + lastInput[0] + "\t[1] " + lastInput[1] + "\t[2] " + lastInput[2] + "\t[3] " + lastInput[3]) ;
+
+// test3[0] = -0.70660275220871f;
+// test3[1] = 0.0294252708554268f;
+// test3[2] = 0.0294480379670858f;
+// test3[3] = 0.706384837627411f;
+//ans = bp.feedForwardContinue(test3[0],test3[1],test3[2],test3[3]); //взять следующие данные, которые посчитала нейронная сеть
+//ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); //взять следующие данные, которые посчитала нейронная сеть
+
+ConsoleLog.Instance.Log("BackSpeed\t[0] " + ans[0]*10000 + "\t[1] " + ans[1]*10000 + "\t[2] " + ans[2]*10000 + "\t[3] " + ans[3]*10000 + "\n") ;
+// ConsoleLog.Instance.Log("\nBack Speed\n[0] " + ans[0]) ;
+// ConsoleLog.Instance.Log("[1] " + ans[1]);
+// ConsoleLog.Instance.Log("[2] " + ans[2]);
+// ConsoleLog.Instance.Log("[3] " + ans[3]);
+
+
+//Debug.Log("Backpropagation:\n [0] " + ans2[0] + " [1] " + ans2[1] + " [2] " + ans2[2] + " [3] " + ans2[3]);
+
 //Debug.Log(rpm);	//gives zeros, because that is an empty Vector4
 //rpm = new Vector4(1000,1000,500,1000);
  //transform.Rotate (new Vector3 (0, -5, 0));
@@ -251,9 +292,12 @@ ConsoleLog.Instance.Log("Olala");
  ans2[2] = ans_stable[2]*10000-ans[2]*10000;
  ans2[3] = ans_stable[3]*10000-ans[3]*10000;
  
- //Debug.Log("transform.rotation: [0] " + transform.rotation[0] + " [1] " + transform.rotation[1] + " [2] " + transform.rotation[2] + " [3] " + transform.rotation[3]);
- Debug.Log("lastInput: [0] " + lastInput[0] + " [1] " + lastInput[1] + " [2] " + lastInput[2] + " [3] " + lastInput[3]);
- Debug.Log("lastanss: [0] " + ans2[0] + " [1] " + ans2[1] + " [2] " + ans2[2] + " [3] " + ans2[3]);
+//Debug.Log("transform.rotation: [0] " + transform.rotation[0] + " [1] " + transform.rotation[1] + " [2] " + transform.rotation[2] + " [3] " + transform.rotation[3]);
+//Debug.Log("lastInput: [0] " + lastInput[0] + " [1] " + lastInput[1] + " [2] " + lastInput[2] + " [3] " + lastInput[3]);
+//Debug.Log("lastanss: [0] " + ans2[0] + " [1] " + ans2[1] + " [2] " + ans2[2] + " [3] " + ans2[3]);
+ 
+
+
  
 		if (Input.GetKeyDown (KeyCode.X)) {
 			//transform.Rotate (new Vector3 (25, 0, 0));
@@ -264,7 +308,8 @@ ConsoleLog.Instance.Log("Olala");
 		switch(cmd){
 		case "A":
 			//transform.Rotate (new Vector3 (5, 0, 0));
-			transform.Rotate (new Vector3 (0, 5, 0));
+			//transform.Rotate (new Vector3 (0, 5, 0));
+
 //			LifeValue = 0.0f;
 //			HaveKnife = 1.0f;
 //			HaveGun = 1.0f;

@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Collections;
 
+
 public class Sample{
 	public float health,knife,gun,enemy;
 	public float[] output = new float[4]; 
@@ -38,6 +39,11 @@ public class Backpropagation : MonoBehaviour {
 	private string[] commands = new string[4]{"A","B","C","D"};
 	
 	void Awake() {
+	
+	
+	
+	
+	
 		inputs = new float[InputNeurons];
 		hiddens = new float[HiddenNeurons];
 		outputs = new float[OutputNeurons];
@@ -51,6 +57,8 @@ public class Backpropagation : MonoBehaviour {
 		assignRandomWeights();
 
 	}
+	
+	
 	
 	// Use this for initialization
 	void Start () {
@@ -70,7 +78,7 @@ public class Backpropagation : MonoBehaviour {
 	 *
 	 */
 	float sigmoid(double val){
-		return (float)((2.0/(1.0+Mathf.Exp((float)-val)))-1);
+		return (float)((Mathf.Exp((float)2.0 * (float)val) - 1) / (Mathf.Exp((float)2.0 * (float)val) + 1)); //default! return (float)(1.0/(1.0+Mathf.Exp((float)-val))); //managed1 return (float)((2.0/(1.0+Mathf.Exp((float)-val)))-1.0);
 	}
 	
 	/*
@@ -80,7 +88,7 @@ public class Backpropagation : MonoBehaviour {
 	 *
 	 */
 	float sigmoidDerivative(double val){
-		return (float)((1/2)*(1+val)*(1.0 - val));				//производная
+		return (float)(1-((float)val*(float)val)); //default! return (float)(val*(1.0 - val));//managed1		return (float)((1/2)*(1.0+val)*(1.0 - val));				//производная
 	}
 	
 	/*
@@ -248,11 +256,30 @@ public class Backpropagation : MonoBehaviour {
 			inputs[2] = Convert.ToSingle(result[2]);
 			inputs[3] = Convert.ToSingle(result[3]);
 			
+			// inputs[0] = -0.70660275220871f;
+			// inputs[1] = 0.0294252708554268f;
+			// inputs[2] = 0.0294480379670858f;
+			// inputs[3] = 0.706384837627411f;
+			
+			// if (iterations_internal <= 0) //checked, inputs are correct!
+			// {
+			// ConsoleLog.Instance.Log("\nInputs\n[0] " + inputs[0]) ;
+			// ConsoleLog.Instance.Log("[1] " + inputs[1]);
+			// ConsoleLog.Instance.Log("[2] " + inputs[2]);
+			// ConsoleLog.Instance.Log("[3] " + inputs[3]);
+			// }
+			
 			targets[0] = Convert.ToSingle(result[4]);
 			targets[1] = Convert.ToSingle(result[5]);
 			targets[2] = Convert.ToSingle(result[6]);
 			targets[3] = Convert.ToSingle(result[7]);
 
+			// targets[0] = -0.000101594996452332f;
+			// targets[1] = 0.000101483106613159f;
+			// targets[2] = -0.00010159364938736f;
+			// targets[3] = 0.000101705539226532f;
+			
+			
 			feedForward();
 			
 			for (int j=0; j<OutputNeurons; j++)
@@ -268,10 +295,13 @@ public class Backpropagation : MonoBehaviour {
 			iterations++;
 			iterations_internal++;
 			Debug.Log(iterations_internal + " " + iterations + " mse="+err);
-			if (iterations++ > 2)
+			if (iterations++ > 200)
 				break;
 			} while(err > 0.050);
+			
+
 			Debug.Log(iterations_internal + " mse="+err);
+			ConsoleLog.Instance.Log("\nError " + err);
 			
 			
 			
