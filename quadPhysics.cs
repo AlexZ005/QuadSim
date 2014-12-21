@@ -47,11 +47,11 @@ public class quadPhysics : MonoBehaviour
 	private LineRenderer lrEngine4;
 	
 	string  fileName = "Assets/sample-data.txt";
-	
+	System.IO.StreamWriter sr = new System.IO.StreamWriter("test");	//better to move two lines up, but you will get shared violation path error!
 	
 	void StartFile(double q1,double q2,double q3,double q4,double i1,double i2,double i3,double i4)		//для записи входных и выходных параметров при включенном PID
 	{
-	System.IO.StreamWriter sr = new System.IO.StreamWriter("test");	//better to move two lines up, but you will get shared violation path error!
+	
 		if (System.IO.File.Exists(fileName))
 		{
 		  //Debug.Log(fileName+" already exists.");
@@ -209,7 +209,13 @@ public class quadPhysics : MonoBehaviour
 		transform.position += xdot * dt;
 		transform.rotation = Quaternion.Euler (theta * 360 / 6.28f);
 		
-		ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); //взять следующие данные, которые посчитала нейронная сеть
+
+		
+		
+		transform.Rotate (new Vector3(-90, 0, 0));
+		
+		
+				ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); //взять следующие данные, которые посчитала нейронная сеть
 		
 		if (ans_stable[0] == 0) {
 		ans_stable[0] = ans[0];
@@ -217,10 +223,6 @@ public class quadPhysics : MonoBehaviour
 		ans_stable[2] = ans[2];
 		ans_stable[3] = ans[3];
 		}
-		
-		
-		transform.Rotate (new Vector3(-90, 0, 0));
-		
 		
 		// visual thrust indicators update
 		float scale = 0.01f;
@@ -239,17 +241,17 @@ if (Input.GetKeyDown (KeyCode.H)) {
 
 
 	//STEP1: ONLY FOR WRITING sample-data
-//if (transform.rotation[1] != 0)
-//StartFile(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3],lastInput[0]/10000,lastInput[1]/10000,lastInput[2]/10000,lastInput[3]/10000);
+if (transform.rotation[1] != 0)
+StartFile(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3],lastInput[0]/10000,lastInput[1]/10000,lastInput[2]/10000,lastInput[3]/10000);
 
 Graph.Log("sin_cos", Mathf.Sin(Time.time), Mathf.Cos(Time.time),(Mathf.Log(1 + Time.time) - Mathf.Log(1 - Time.time))/2);
 Graph.Log("PID", lastInput[0],lastInput[1],lastInput[2],lastInput[3]);
-ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); //взять следующие данные, которые посчитала нейронная сеть
+//ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); //взять следующие данные, которые посчитала нейронная сеть
 Graph.Log("BackProp", ans[0],ans[1],ans[2],ans[3]);
 
 if (Input.GetKeyDown (KeyCode.U)) {
 	//STEP2: USE ONLY AFTER feedForward computation
-ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); //взять следующие данные, которые посчитала нейронная сеть
+//ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); //взять следующие данные, которые посчитала нейронная сеть
 Debug.Log("Test ans: [0] " + ans[0]*10000 + " [1] " + ans[1]*10000 + " [2] " + ans[2]*10000 + " [3] " + ans[3]*10000);		//вероятнее всего это будет надо подавать на квадрокоптер	
 
 //transform.Rotate (new Vector3 (0, 5, 0));
