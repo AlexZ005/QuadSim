@@ -52,14 +52,18 @@ public class pdController : MonoBehaviour, IQuadController {
 	
 	private Vector4 err2inputs (Vector3 error, float thrust)
 	{
+	
 		float Ix = quadcopter.i [0, 0],
 			Iy = quadcopter.i [1, 1],
 			Iz = quadcopter.i [2, 2];
 		//Debug.Log(thrust / 4 - (2 * quadcopter.b * error [0] * Ix + error [2] * Iz * quadcopter.k * quadcopter.l) / (4 * quadcopter.b * quadcopter.k * quadcopter.l));
+		if (quadcopter.quadmode == 1)		//if PID is on, control quad with PID controller
 		return new Vector4 (
 			thrust / 4 - (2 * quadcopter.b * error [0] * Ix + error [2] * Iz * quadcopter.k * quadcopter.l) / (4 * quadcopter.b * quadcopter.k * quadcopter.l),		//funny if you will place 1000
 			thrust / 4 + error [2] * Iz / (4 * quadcopter.b) - (error [1] * Iy) / (2 * quadcopter.k * quadcopter.l),
 			thrust / 4 - (-2 * quadcopter.b * error [0] * Ix + error [2] * Iz * quadcopter.k * quadcopter.l) / (4 * quadcopter.b * quadcopter.k * quadcopter.l),
 			thrust / 4 + error [2] * Iz / (4 * quadcopter.b) + (error [1] * Iy) / (2 * quadcopter.k * quadcopter.l));
+			else
+			return new Vector4();
 	}
 }

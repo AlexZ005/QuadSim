@@ -46,6 +46,8 @@ public class quadPhysics : MonoBehaviour
 	private LineRenderer lrEngine3;
 	private LineRenderer lrEngine4;
 	
+	public int quadmode;
+	
 	string  fileName = "Assets/sample-data.txt";
 	System.IO.StreamWriter sr = new System.IO.StreamWriter("test");	//better to move two lines up, but you will get shared violation path error!
 	
@@ -224,13 +226,16 @@ public class quadPhysics : MonoBehaviour
 		ans_stable[3] = ans[3];
 		}
 		
+		
+		
 		// visual thrust indicators update
 		float scale = 0.01f;
 		lrEngine1.SetPosition (1, new Vector3 (0, 0, inputs [0] * scale));
 		lrEngine2.SetPosition (1, new Vector3 (0, 0, inputs [1] * scale));
 		lrEngine3.SetPosition (1, new Vector3 (0, 0, inputs [2] * scale));
 		lrEngine4.SetPosition (1, new Vector3 (0, 0, inputs [3] * scale));
-
+		
+		
 if (Input.GetKeyDown (KeyCode.G)) 
 	theta = Random.insideUnitSphere;
 
@@ -241,8 +246,8 @@ if (Input.GetKeyDown (KeyCode.H)) {
 
 
 	//STEP1: ONLY FOR WRITING sample-data
-if (transform.rotation[1] != 0)
-StartFile(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3],lastInput[0]/10000,lastInput[1]/10000,lastInput[2]/10000,lastInput[3]/10000);
+//if (transform.rotation[1] != 0)
+//StartFile(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3],lastInput[0]/10000,lastInput[1]/10000,lastInput[2]/10000,lastInput[3]/10000);
 
 Graph.Log("sin_cos", Mathf.Sin(Time.time), Mathf.Cos(Time.time),(Mathf.Log(1 + Time.time) - Mathf.Log(1 - Time.time))/2);
 Graph.Log("PID", lastInput[0],lastInput[1],lastInput[2],lastInput[3]);
@@ -283,10 +288,12 @@ ConsoleLog.Instance.Log("BackSpeed\t[0] " + ans[0]*10000 + "\t[1] " + ans[1]*100
  }
  
  if (Input.GetKeyDown (KeyCode.O)) 
- transform.Rotate (new Vector3 (0, 0, -5));
+ quadmode = 1;
+ //transform.Rotate (new Vector3 (0, 0, -5));
  
  if (Input.GetKeyDown (KeyCode.P)) 
- transform.Rotate (new Vector3 (0, 0, 5));
+ quadmode = 0;
+ //transform.Rotate (new Vector3 (0, 0, 5));
  
  
  ans2[0] = ans_stable[0]*10000-ans[0]*10000;
@@ -484,7 +491,7 @@ ConsoleLog.Instance.Log("BackSpeed\t[0] " + ans[0]*10000 + "\t[1] " + ans[1]*100
 		float a31, float a32, float a33)
 	{
 		Matrix4x4 m = new Matrix4x4 ();
-		
+
 		 m.SetRow (0, new Vector4 (a11, a12, a13, 0));
 		 m.SetRow (1, new Vector4 (a21, a22, a23, 0));
 		 m.SetRow (2, new Vector4 (a31, a32, a33, 0));

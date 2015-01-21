@@ -26,15 +26,15 @@ public class Backpropagation : MonoBehaviour {
 	//public int InputNeurons = 4;
 	public int InputNeurons = 4;									//Входящие нейроны
 	public int OutputNeurons = 4;
-	public int HiddenNeurons = 3;
-	public float LearnRate = 0.2f;
+	public int HiddenNeurons = 30;		//default 3
+	public float LearnRate = 0.7f;		//default 0.2
 	private int RecordCount = 0;
 	public GameObject player,npc;
 	
 	private float[,] weightIH,weightHO;
 	private float[] inputs,hiddens,outputs,targets;
 	private float[] erro,errh;
-	private Sample[] samples = new Sample[557];
+	private Sample[] samples = new Sample[7];//[19002]; //557
 	
 	private string[] commands = new string[4]{"A","B","C","D"};
 	
@@ -228,7 +228,7 @@ public class Backpropagation : MonoBehaviour {
 	 * 
 	 */
 	void training(){
-		StreamReader reader = (new FileInfo("Assets/sample-data.txt")).OpenText();
+		StreamReader reader = (new FileInfo("Assets/sample-data-1.txt")).OpenText();
 		
 		//Read the training dataset
 		string text = reader.ReadLine();
