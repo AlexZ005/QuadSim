@@ -180,19 +180,25 @@ public class quadPhysics : MonoBehaviour
 		
 		
 		//Uncomment to get back normal inputs
-		Vector4 inputs = controller.getInputs (transform.position, xdot, theta, thetadot);
+		//Vector4 inputs = controller.getInputs (transform.position, xdot, theta, thetadot);
 		
+		Vector4 inputs = new Vector4();
 		
-		
-		//ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]);
+		ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]);
 		//The following 5 lines are used for putting speeds to the rotors which comes from neural network
-		 // Vector4 inputs = new Vector4();
+		 if (quadmode == 0 )
+		 {
+		 
 		 // STABLE PASS
-		 // inputs[0] = ans_stable[0]*10000-ans[0]*10000;
-		 // inputs[1] = ans_stable[0]*10000-ans[0]*10000;
-		 // inputs[2] = ans_stable[0]*10000-ans[0]*10000;
-		 // inputs[3] = ans_stable[0]*10000-ans[0]*10000;
-		
+		  inputs[0] = ans_stable[0]*10000-ans[0]*10000;
+		  inputs[1] = ans_stable[0]*10000-ans[0]*10000;
+		  inputs[2] = ans_stable[0]*10000-ans[0]*10000;
+		  inputs[3] = ans_stable[0]*10000-ans[0]*10000;
+		}
+		else
+		{
+		inputs = controller.getInputs (transform.position, xdot, theta, thetadot);
+		}
 		 // inputs[0] = ans_stable[0]*10000-ans[0]*10000;
 		 // inputs[1] = ans_stable[1]*10000-ans[1]*10000;
 		 // inputs[2] = ans_stable[2]*10000-ans[2]*10000;
@@ -246,8 +252,11 @@ if (Input.GetKeyDown (KeyCode.H)) {
 
 
 	//STEP1: ONLY FOR WRITING sample-data
-//if (transform.rotation[1] != 0)
-//StartFile(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3],lastInput[0]/10000,lastInput[1]/10000,lastInput[2]/10000,lastInput[3]/10000);
+	if (quadmode == 3)
+	{
+		if (transform.rotation[1] != 0)
+		StartFile(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3],lastInput[0]/10000,lastInput[1]/10000,lastInput[2]/10000,lastInput[3]/10000);
+	}
 
 Graph.Log("sin_cos", Mathf.Sin(Time.time), Mathf.Cos(Time.time),(Mathf.Log(1 + Time.time) - Mathf.Log(1 - Time.time))/2);
 Graph.Log("PID", lastInput[0],lastInput[1],lastInput[2],lastInput[3]);
@@ -294,6 +303,9 @@ ConsoleLog.Instance.Log("BackSpeed\t[0] " + ans[0]*10000 + "\t[1] " + ans[1]*100
  if (Input.GetKeyDown (KeyCode.P)) 
  quadmode = 0;
  //transform.Rotate (new Vector3 (0, 0, 5));
+ 
+ if (Input.GetKeyDown (KeyCode.W)) 
+ quadmode = 3;
  
  
  ans2[0] = ans_stable[0]*10000-ans[0]*10000;
