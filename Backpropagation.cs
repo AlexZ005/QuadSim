@@ -343,6 +343,18 @@ public class Backpropagation : MonoBehaviour {
 	public void training(){		//changed this method to public to be able to access from quadPhysics
 		StreamReader reader = (new FileInfo("Assets/sample-data-2000.txt")).OpenText();
 		
+		
+		var  fileName = "Assets/SavedData/ErrorFunctions/BackP-2000-" + HiddenNeurons2 + "neurons.txt";
+	
+		if (File.Exists(fileName))
+        {
+            Debug.Log(fileName+" already exists.");
+            return;
+        }
+        var sr = File.CreateText(fileName);
+		
+		
+		
 		//Read the training dataset
 		string text = reader.ReadLine();
 
@@ -408,11 +420,14 @@ public class Backpropagation : MonoBehaviour {
 			iterations++;
 			iterations_internal++;
 			Debug.Log(iterations_internal + " " + iterations + " mse="+err);
+			
+			sr.WriteLine("iterations_internal\t" + iterations_internal + "\titerations\t" + iterations + "\tmse=\t" + err);
+			
 			if (iterations++ > 200)
 				break;
 			} while(err > 0.050);
 			
-
+			//sr.WriteLine("iterations_internal\t" + iterations_internal + "\tmse=\t" + err);
 			Debug.Log(iterations_internal + " mse="+err);
 			ConsoleLog.Instance.Log("\nError " + err);
 			
