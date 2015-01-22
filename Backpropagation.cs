@@ -182,15 +182,35 @@ public class Backpropagation : MonoBehaviour {
 				sr.WriteLine (weightHO[h,o]); */
 		
 		
-		for (int i = 0; i < InputNeurons; i++)
+/* 		for (int i = 0; i < InputNeurons; i++)
 			for (int h = 0; h < HiddenNeurons2; h++)
 				sr.WriteLine (weightIH[i,h]);
 		
 		for (int h=0; h < HiddenNeurons2; h++)
 			for (int o = 0; o < OutputNeurons; o++)
-				sr.WriteLine (weightHO[h,o]);
+				sr.WriteLine (weightHO[h,o]); */
 		 
-	
+		int i,h,o;
+		double sum;
+		 /* Calculate input to hidden layer */
+		for (h = 0; h < HiddenNeurons2; h++){
+			for (i = 0; i< InputNeurons; i++)
+				sr.WriteLine(weightIH[i,h]);				//Для каждого элемента скрытого слоя vj находится входной сигнал 
+			//Debug.Log(hiddens[h]);
+			/* Add in Bias */
+			sr.WriteLine(weightIH[InputNeurons,h]);
+		}
+		/* Calculate the hidden to output layer */
+		for (o = 0; o < OutputNeurons; o++){
+			sum = 0.0;
+			for (h =0; h < HiddenNeurons2; h++)
+				sr.WriteLine(weightHO[h,o]);		//Для каждого элемента скрытого слоя yk находится входной сигнал 
+			
+			/* Add in Bias */
+			sr.WriteLine(weightHO[HiddenNeurons2,o]);
+		}
+
+		 
 		//Debug.Log("Numbers" + weightIH.Length);
 
 	
@@ -212,7 +232,8 @@ public class Backpropagation : MonoBehaviour {
 		
 		//Read the training dataset
 		//string text = readweights.ReadLine();
-			
+
+/* 		
 			int i,h,o;
 		for (h = 0; h < HiddenNeurons2; h++)
 			for (i = 0; i< InputNeurons; i++)
@@ -220,10 +241,32 @@ public class Backpropagation : MonoBehaviour {
 			weightIH[i,h] = float.Parse(readweights.ReadLine());
 			//Debug.Log("Read " + i + " " + h + " " + weightIH[i,h]);
 			}
-		/* Write the hidden to output layer */
+		// Write the hidden to output layer 
 		for (o = 0; o < OutputNeurons; o++)
 			for (h =0; h < HiddenNeurons2; h++)
 			weightHO[h,o] = float.Parse(readweights.ReadLine());
+	
+ */	
+	
+			int i,h,o;
+		double sum;
+		 /* Calculate input to hidden layer */
+		for (h = 0; h < HiddenNeurons2; h++){
+			for (i = 0; i< InputNeurons; i++)
+				weightIH[i,h]=float.Parse(readweights.ReadLine());				//Для каждого элемента скрытого слоя vj находится входной сигнал 
+			//Debug.Log(hiddens[h]);
+			/* Add in Bias */
+			weightIH[InputNeurons,h]=float.Parse(readweights.ReadLine());
+		}
+		/* Calculate the hidden to output layer */
+		for (o = 0; o < OutputNeurons; o++){
+			sum = 0.0;
+			for (h =0; h < HiddenNeurons2; h++)
+				weightHO[h,o]=float.Parse(readweights.ReadLine());		//Для каждого элемента скрытого слоя yk находится входной сигнал 
+			
+			/* Add in Bias */
+			weightHO[HiddenNeurons2,o]=float.Parse(readweights.ReadLine());
+		}
 	
 		readweights.Close();
 	
