@@ -26,7 +26,7 @@ public class Backpropagation : MonoBehaviour {
 	//public int InputNeurons = 4;
 	public int InputNeurons = 4;									//Входящие нейроны
 	public int OutputNeurons = 4;
-	public int HiddenNeurons = 30;		//default 3
+	public int HiddenNeurons2 = 30;		//default 3
 	public float LearnRate = 0.7f;		//default 0.2
 	private int RecordCount = 0;
 	public GameObject player,npc;
@@ -34,26 +34,22 @@ public class Backpropagation : MonoBehaviour {
 	private float[,] weightIH,weightHO;
 	private float[] inputs,hiddens,outputs,targets;
 	private float[] erro,errh;
-	private Sample[] samples = new Sample[7];//[19002]; //557
+	private Sample[] samples = new Sample[7];//[19002]; //557/// Should be 7 as 0-7 columns, reads all lines
 	
 	private string[] commands = new string[4]{"A","B","C","D"};
 	
 	void Awake() {
 	
-	
-	
-	
-	
 		inputs = new float[InputNeurons];
-		hiddens = new float[HiddenNeurons];
+		hiddens = new float[HiddenNeurons2];
 		outputs = new float[OutputNeurons];
 		targets = new float[OutputNeurons];
 		
 		erro = new float[OutputNeurons];
-		errh = new float[HiddenNeurons];
+		errh = new float[HiddenNeurons2];
 		
-		weightIH = new float[InputNeurons+1,HiddenNeurons];
-		weightHO = new float[HiddenNeurons+1,OutputNeurons];
+		weightIH = new float[InputNeurons+1,HiddenNeurons2];
+		weightHO = new float[HiddenNeurons2+1,OutputNeurons];
 		assignRandomWeights();
 
 	}
@@ -62,7 +58,7 @@ public class Backpropagation : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		training();		
+		//training();			//moved to start training by pressing T in quadPhysics!
 		//test ();
 	}
 	
@@ -70,6 +66,12 @@ public class Backpropagation : MonoBehaviour {
 	void Update () {
 
 	}
+	
+	
+	public int HiddenProof() {
+	return HiddenNeurons2;	//for quadPhysics GUI
+	}
+	
 	
 	/*
 	 *  sigmoid()
@@ -101,7 +103,7 @@ public class Backpropagation : MonoBehaviour {
 		int i,h,o;
 		double sum;
 		 /* Calculate input to hidden layer */
-		for (h = 0; h < HiddenNeurons; h++){
+		for (h = 0; h < HiddenNeurons2; h++){
 			sum = 0.0;
 			for (i = 0; i< InputNeurons; i++)
 				sum += inputs[i]*weightIH[i,h];				//Для каждого элемента скрытого слоя vj находится входной сигнал 
@@ -113,11 +115,11 @@ public class Backpropagation : MonoBehaviour {
 		/* Calculate the hidden to output layer */
 		for (o = 0; o < OutputNeurons; o++){
 			sum = 0.0;
-			for (h =0; h < HiddenNeurons; h++)
+			for (h =0; h < HiddenNeurons2; h++)
 				sum += hiddens[h] * weightHO[h,o];		//Для каждого элемента скрытого слоя yk находится входной сигнал 
 			
 			/* Add in Bias */
-			sum += weightHO[HiddenNeurons,o];
+			sum += weightHO[HiddenNeurons2,o];
 			outputs[o] = sigmoid(sum);
 		}		
 		
@@ -134,7 +136,7 @@ public class Backpropagation : MonoBehaviour {
 		
 		double sum;
 		 /* Calculate input to hidden layer */
-		for (h = 0; h < HiddenNeurons; h++){
+		for (h = 0; h < HiddenNeurons2; h++){
 			sum = 0.0;
 			for (i = 0; i< InputNeurons; i++)
 				sum += inin[i]*weightIH[i,h];				//Для каждого элемента скрытого слоя vj находится входной сигнал 
@@ -146,11 +148,11 @@ public class Backpropagation : MonoBehaviour {
 		/* Calculate the hidden to output layer */
 		for (o = 0; o < OutputNeurons; o++){
 			sum = 0.0;
-			for (h =0; h < HiddenNeurons; h++)
+			for (h =0; h < HiddenNeurons2; h++)
 				sum += hiddens[h] * weightHO[h,o];		//Для каждого элемента скрытого слоя yk находится входной сигнал 
 			
 			/* Add in Bias */
-			sum += weightHO[HiddenNeurons,o];
+			sum += weightHO[HiddenNeurons2,o];
 			outputs[o] = sigmoid(sum);
 		}
 			return outputs;
@@ -158,7 +160,75 @@ public class Backpropagation : MonoBehaviour {
 	}
 	
 	
+	public void SaveWeights() {
 	
+	//private float[,] weightIH,weightHO;
+	var  fileName = "Assets/SavedData/BackP-2000-" + HiddenNeurons2 + "neurons.txt";
+	
+	if (File.Exists(fileName))
+        {
+            Debug.Log(fileName+" already exists.");
+            return;
+        }
+        var sr = File.CreateText(fileName);
+        
+		
+		/* for (h = 0; h < HiddenNeurons2; h++)
+			for (i = 0; i< InputNeurons; i++)
+			sr.WriteLine (weightIH[i,h]);
+		Write the hidden to output layer
+		for (o = 0; o < OutputNeurons; o++)
+			for (h =0; h < HiddenNeurons2; h++)
+				sr.WriteLine (weightHO[h,o]); */
+		
+		
+		for (int i = 0; i < InputNeurons; i++)
+			for (int h = 0; h < HiddenNeurons2; h++)
+				sr.WriteLine (weightIH[i,h]);
+		
+		for (int h=0; h < HiddenNeurons2; h++)
+			for (int o = 0; o < OutputNeurons; o++)
+				sr.WriteLine (weightHO[h,o]);
+		 
+	
+		//Debug.Log("Numbers" + weightIH.Length);
+
+	
+//		 File.WriteAllLines(fileName, weightIH[,]);
+		 
+		//sr.WriteLine ("This is my file.");
+        //sr.WriteLine ("I can write ints {0} or floats {1}, and so on.",
+		//1, 4.2);
+        sr.Close();
+	
+	}
+	
+	
+	public void LoadWeights() {
+	
+			
+	
+	StreamReader readweights = (new FileInfo("Assets/SavedData/BackP-2000-" + HiddenNeurons2 + "neurons.txt")).OpenText();
+		
+		//Read the training dataset
+		//string text = readweights.ReadLine();
+			
+			int i,h,o;
+		for (h = 0; h < HiddenNeurons2; h++)
+			for (i = 0; i< InputNeurons; i++)
+			{
+			weightIH[i,h] = float.Parse(readweights.ReadLine());
+			//Debug.Log("Read " + i + " " + h + " " + weightIH[i,h]);
+			}
+		/* Write the hidden to output layer */
+		for (o = 0; o < OutputNeurons; o++)
+			for (h =0; h < HiddenNeurons2; h++)
+			weightHO[h,o] = float.Parse(readweights.ReadLine());
+	
+		readweights.Close();
+	
+	
+	}
 	
 	/*
 	 *  backPropagate()
@@ -173,7 +243,7 @@ public class Backpropagation : MonoBehaviour {
 			erro[o] = (targets[o]-outputs[o])*sigmoidDerivative(outputs[o]);		// Каждый выходной элемент Yl получает образец правильного ответа 
 																											// dl и вычисляется корректирующий коэффициент
 		/* Calculate the hidden layer error (step 3 for hidden cell) */
-		for (h = 0; h < HiddenNeurons; h++){
+		for (h = 0; h < HiddenNeurons2; h++){
 			errh[h]= 0.0f;
 			for ( o = 0; o<OutputNeurons; o++)
 				errh[h] += erro[o]*weightHO[h,o];												// Для каждого скрытого элемента vj 
@@ -183,14 +253,14 @@ public class Backpropagation : MonoBehaviour {
 		
 		/* Update the weights for the output layer (step 4 for output cell) */
 		for ( o=0; o<OutputNeurons; o++){
-			for ( h=0; h<HiddenNeurons; h++)
+			for ( h=0; h<HiddenNeurons2; h++)
 				weightHO[h,o] += (LearnRate*erro[o]*hiddens[h]);
 			/* Update the Bias */
-			weightHO[HiddenNeurons,o] += (LearnRate*erro[o]);
+			weightHO[HiddenNeurons2,o] += (LearnRate*erro[o]);
 		}
 		
 		/* Update the weights for the hidden layer (step 4 for hidden cell) */
-		for (h=0; h<HiddenNeurons; h++){
+		for (h=0; h<HiddenNeurons2; h++){
 			for (i=0; i<InputNeurons; i++)
 				weightIH[i,h] += (LearnRate*errh[h]*inputs[i]);
 			/* Update the Bias */
@@ -227,8 +297,8 @@ public class Backpropagation : MonoBehaviour {
 	 *  Read training dataset and training the weight of networks.
 	 * 
 	 */
-	void training(){
-		StreamReader reader = (new FileInfo("Assets/sample-data-1.txt")).OpenText();
+	public void training(){		//changed this method to public to be able to access from quadPhysics
+		StreamReader reader = (new FileInfo("Assets/sample-data-2000.txt")).OpenText();
 		
 		//Read the training dataset
 		string text = reader.ReadLine();
@@ -348,12 +418,16 @@ public class Backpropagation : MonoBehaviour {
 
 	void assignRandomWeights(){									//Присваивание случайных весов
 		for (int i = 0; i < InputNeurons+1; i++)
-			for (int h = 0; h < HiddenNeurons; h++)
-				weightIH[i,h] = UnityEngine.Random.value;
+			for (int h = 0; h < HiddenNeurons2; h++)
+			{
+				//Debug.Log(HiddenNeurons2);
+				weightIH[i,h] = UnityEngine.Random.Range(-1f, 1f);//UnityEngine.Random.value;
+				//Debug.Log("Weight: i " + i + " h " + h + " value "+ weightIH[i,h]);
+				}
 		
-		for (int h=0; h < HiddenNeurons+1; h++)
+		for (int h=0; h < HiddenNeurons2+1; h++)
 			for (int o = 0; o < OutputNeurons; o++)
-				weightHO[h,o] = UnityEngine.Random.value;
+				weightHO[h,o] = UnityEngine.Random.Range(-1f, 1f);//UnityEngine.Random.value;
 	}
 	
 	public string action(float[] vec){							//Функция вызываемая quadPhysics.cs

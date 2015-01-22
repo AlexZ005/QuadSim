@@ -126,7 +126,7 @@ public class quadPhysics : MonoBehaviour
 	
 	void Awake(){
 	Graph.Initialize();
-		
+		quadmode = 1;
 		
 		// Just for fun, lets add a nice blue style:
 		Graph.Instance.AddStyle(
@@ -184,16 +184,21 @@ public class quadPhysics : MonoBehaviour
 		
 		Vector4 inputs = new Vector4();
 		
-		ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]);
+		ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); 
+		
 		//The following 5 lines are used for putting speeds to the rotors which comes from neural network
 		 if (quadmode == 0 )
 		 {
-		 
 		 // STABLE PASS
-		  inputs[0] = ans_stable[0]*10000-ans[0]*10000;
-		  inputs[1] = ans_stable[0]*10000-ans[0]*10000;
-		  inputs[2] = ans_stable[0]*10000-ans[0]*10000;
-		  inputs[3] = ans_stable[0]*10000-ans[0]*10000;
+		  //inputs[0] = ans_stable[0]*10000-ans[0]*10000;
+		  //inputs[1] = ans_stable[0]*10000-ans[0]*10000;
+		  //inputs[2] = ans_stable[0]*10000-ans[0]*10000;
+		  //inputs[3] = ans_stable[0]*10000-ans[0]*10000;
+		  
+		  inputs[0] = ans[0]*10000;
+		  inputs[1] = ans[0]*10000;
+		  inputs[2] = ans[0]*10000;
+		  inputs[3] = ans[0]*10000;
 		}
 		else
 		{
@@ -223,7 +228,7 @@ public class quadPhysics : MonoBehaviour
 		transform.Rotate (new Vector3(-90, 0, 0));
 		
 		
-				ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); //взять следующие данные, которые посчитала нейронная сеть
+				//ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); //взять следующие данные, которые посчитала нейронная сеть
 		
 		if (ans_stable[0] == 0) {
 		ans_stable[0] = ans[0];
@@ -295,6 +300,20 @@ ConsoleLog.Instance.Log("BackSpeed\t[0] " + ans[0]*10000 + "\t[1] " + ans[1]*100
 //rpm = new Vector4(1000,1000,500,1000);
  //transform.Rotate (new Vector3 (0, -5, 0));
  }
+ 
+ //check random weights assignments
+ if (Input.GetKeyDown (KeyCode.R)) 
+ Debug.Log(Random.Range(-10f, 10f));
+ //Debug.Log(UnityEngine.Random.value);
+ 
+ if (Input.GetKeyDown (KeyCode.T)) 
+ bp.training();		
+ 
+ if (Input.GetKeyDown (KeyCode.L)) 
+ bp.LoadWeights();
+ 
+ if (Input.GetKeyDown (KeyCode.S)) 
+ bp.SaveWeights();
  
  if (Input.GetKeyDown (KeyCode.O)) 
  quadmode = 1;
@@ -391,7 +410,6 @@ ConsoleLog.Instance.Log("BackSpeed\t[0] " + ans[0]*10000 + "\t[1] " + ans[1]*100
 			controller.reset ();
 		}
 		
-		
 		GUI.Box(new Rect(0,0,Screen.width,Screen.height),"This is a title");
 		
 		GUI.color = Color.white;
@@ -407,8 +425,11 @@ ConsoleLog.Instance.Log("BackSpeed\t[0] " + ans[0]*10000 + "\t[1] " + ans[1]*100
 			"\nthetadot: " + thetadot.ToString () + 
 			"\n\nrotation: " + transform.rotation.ToString () +
 			"\n\ninputs:\n   " + lastInput.ToString () +
-			"\n\nns:\n   " + (ans_stable[0]*10000-ans[0]*10000));
+			"\n\nHidden neurons:   " + bp.HiddenProof().ToString () +
+			"\n\nns:\n   " + (ans[0]*10000));	///(ans_stable[0]*10000-ans[0]*10000)); /// were doing so to make it 0
+	
 	}
+	
 	
 	private Vector3 angular_acceleration (Vector4 inputs)
 	{
