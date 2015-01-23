@@ -48,7 +48,7 @@ public class quadPhysics : MonoBehaviour
 	
 	public int quadmode;
 	
-	string  fileName = "Assets/sample-data.txt";
+	string  fileName = "Assets/sample-data-200000.txt";
 	System.IO.StreamWriter sr = new System.IO.StreamWriter("test");	//better to move two lines up, but you will get shared violation path error!
 	
 	void StartFile(double q1,double q2,double q3,double q4,double i1,double i2,double i3,double i4)		//для записи входных и выходных параметров при включенном PID
@@ -257,11 +257,18 @@ if (Input.GetKeyDown (KeyCode.H)) {
 
 
 	//STEP1: ONLY FOR WRITING sample-data
-	if (quadmode == 3)
-	{
+	
+/* 	{
 		if (transform.rotation[1] != 0)
 		StartFile(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3],lastInput[0]/10000,lastInput[1]/10000,lastInput[2]/10000,lastInput[3]/10000);
-	}
+		
+		if ((int)lastInput[1] <= 0.0 && (int)lastInput[2] <= 0.0 && (int)lastInput[3] <= 0.0 && (int)lastInput[0] <= 0.0 && (int)transform.rotation[0] >= -0.7000001 && transform.rotation[1] <= 0.0000001 && (int)transform.rotation[2] <= 0.0000001 && (int)transform.rotation[3] >= -0.7000001 && transform.rotation[1] >= -0.0000001 && transform.rotation[2] >= -0.0000001 && (int)transform.rotation[0] <= 0.7000001 && (int)transform.rotation[3] <= 0.7000001)
+		{
+			Debug.Log(transform.rotation[1]);
+			this.reset ();
+			controller.reset ();
+		}
+	} */
 
 Graph.Log("sin_cos", Mathf.Sin(Time.time), Mathf.Cos(Time.time),(Mathf.Log(1 + Time.time) - Mathf.Log(1 - Time.time))/2);
 Graph.Log("PID", lastInput[0],lastInput[1],lastInput[2],lastInput[3]);
@@ -392,12 +399,11 @@ ConsoleLog.Instance.Log("BackSpeed\t[0] " + ans[0]*10000 + "\t[1] " + ans[1]*100
 			
 				}
 
-		
-
-
+				
 		if (Input.GetKeyDown (KeyCode.R)) {
 			this.reset ();
 						controller.reset ();
+						
 				}
 	}
 	
