@@ -163,7 +163,7 @@ public class Backpropagation : MonoBehaviour {
 	public void SaveWeights() {
 	
 	//private float[,] weightIH,weightHO;
-	var  fileName = "Assets/SavedData/BackP-2000-" + HiddenNeurons2 + "neurons.txt";
+	var  fileName = "Assets/SavedData/BackP-20000-" + HiddenNeurons2 + "neurons.txt";
 	
 	if (File.Exists(fileName))
         {
@@ -228,7 +228,7 @@ public class Backpropagation : MonoBehaviour {
 	
 			
 	
-	StreamReader readweights = (new FileInfo("Assets/SavedData/BackP-2000-" + HiddenNeurons2 + "neurons.txt")).OpenText();
+	StreamReader readweights = (new FileInfo("Assets/SavedData/BackP-20000-" + HiddenNeurons2 + "neurons.txt")).OpenText();
 		
 		//Read the training dataset
 		//string text = readweights.ReadLine();
@@ -341,10 +341,10 @@ public class Backpropagation : MonoBehaviour {
 	 * 
 	 */
 	public void training(){		//changed this method to public to be able to access from quadPhysics
-		StreamReader reader = (new FileInfo("Assets/sample-data-2000.txt")).OpenText();
+		StreamReader reader = (new FileInfo("Assets/sample-data-20000.txt")).OpenText();
 		
 		
-		var  fileName = "Assets/SavedData/ErrorFunctions/BackP-2000-" + HiddenNeurons2 + "neurons.txt";
+		var  fileName = "Assets/SavedData/ErrorFunctions/BackP-20000-" + HiddenNeurons2 + "neurons.txt";
 	
 		if (File.Exists(fileName))
         {
@@ -410,7 +410,7 @@ public class Backpropagation : MonoBehaviour {
 			for (int j=0; j<OutputNeurons; j++)
 				err += Mathf.Pow(targets[j]-outputs[j],2);
 			
-			Debug.Log("targ: " + targets[0] + " out: " + outputs[0]);	//targ: -0.02626049 out: 0.2640465
+			//Debug.Log("targ: " + targets[0] + " out: " + outputs[0]);	//targ: -0.02626049 out: 0.2640465
 			
 			err = (float)0.5*err;
 			
@@ -419,17 +419,17 @@ public class Backpropagation : MonoBehaviour {
 			
 			iterations++;
 			iterations_internal++;
-			Debug.Log(iterations_internal + " " + iterations + " mse="+err);
+			//Debug.Log(iterations_internal + " " + iterations + " mse="+err);
 			
 			sr.WriteLine("iterations_internal\t" + iterations_internal + "\titerations\t" + iterations + "\tmse=\t" + err);
 			
-			if (iterations++ > 200)
+			if (iterations++ > 2000)
 				break;
-			} while(err > 0.050);
+			} while(err > 0.0050);
 			
 			//sr.WriteLine("iterations_internal\t" + iterations_internal + "\tmse=\t" + err);
-			Debug.Log(iterations_internal + " mse="+err);
-			ConsoleLog.Instance.Log("\nError " + err);
+			//Debug.Log(iterations_internal + " mse="+err);
+			//ConsoleLog.Instance.Log("\nError " + err);
 			
 			
 			
