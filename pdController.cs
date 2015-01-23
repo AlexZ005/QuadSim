@@ -4,11 +4,12 @@ using System.Collections;
 public class pdController : MonoBehaviour, IQuadController {
 	
 	public quadPhysics quadcopter { get; private set; }
-	
+	private Backpropagation bp = null;
     // Use this for initialization
     private void Start ()
 	{
 		quadcopter = (quadPhysics)GetComponent (typeof(quadPhysics));
+		bp = GameObject.Find("GM").GetComponent<Backpropagation>();
 		reset ();
 	}
 
@@ -56,6 +57,19 @@ public class pdController : MonoBehaviour, IQuadController {
 		float Ix = quadcopter.i [0, 0],
 			Iy = quadcopter.i [1, 1],
 			Iz = quadcopter.i [2, 2];
+			
+			// float[] ans = new float[4]; ;
+			// ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]);
+			
+			// Debug.Log("PID[0]: " + thrust / 4 - (2 * quadcopter.b * error [0] * Ix + error [2] * Iz * quadcopter.k * quadcopter.l) / (4 * quadcopter.b * quadcopter.k * quadcopter.l));
+			// Debug.Log("BackP[0]: " + ans[0]);
+			// return new Vector4 (
+			// ans[2]*10000,		//funny if you will place 1000
+			// ans[3]*10000,
+			// ans[2]*10000,
+			// ans[3]*10000);
+			//Debug.Log("PID[0]: " + thrust / 4 - (2 * quadcopter.b * error [0] * Ix + error [2] * Iz * quadcopter.k * quadcopter.l) / (4 * quadcopter.b * quadcopter.k * quadcopter.l));
+			//Debug.Log("BackP[0]: " + ans[0]);
 		//Debug.Log(thrust / 4 - (2 * quadcopter.b * error [0] * Ix + error [2] * Iz * quadcopter.k * quadcopter.l) / (4 * quadcopter.b * quadcopter.k * quadcopter.l));
 		if (quadcopter.quadmode == 1)		//if PID is on, control quad with PID controller
 		return new Vector4 (

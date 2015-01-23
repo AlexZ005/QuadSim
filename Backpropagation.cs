@@ -163,7 +163,7 @@ public class Backpropagation : MonoBehaviour {
 	public void SaveWeights() {
 	
 	//private float[,] weightIH,weightHO;
-	var  fileName = "Assets/SavedData/BackP-38500-" + HiddenNeurons2 + "neurons.txt";
+	var  fileName = "Assets/SavedData/BackP-38500+900000-" + HiddenNeurons2 + "neurons.txt";
 	
 	if (File.Exists(fileName))
         {
@@ -228,7 +228,7 @@ public class Backpropagation : MonoBehaviour {
 	
 			
 	
-	StreamReader readweights = (new FileInfo("Assets/SavedData/BackP-38500-" + HiddenNeurons2 + "neurons.txt")).OpenText();
+	StreamReader readweights = (new FileInfo("Assets/SavedData/BackP-38500+900000-" + HiddenNeurons2 + "neurons.txt")).OpenText();
 		
 		//Read the training dataset
 		//string text = readweights.ReadLine();
@@ -341,10 +341,10 @@ public class Backpropagation : MonoBehaviour {
 	 * 
 	 */
 	public void training(){		//changed this method to public to be able to access from quadPhysics
-		StreamReader reader = (new FileInfo("Assets/sample-data-38500.txt")).OpenText();
+		StreamReader reader = (new FileInfo("Assets/sample-data-38500+900000.txt")).OpenText();
 		
 		
-		var  fileName = "Assets/SavedData/ErrorFunctions/BackP-38500-" + HiddenNeurons2 + "neurons.txt";
+		var  fileName = "Assets/SavedData/ErrorFunctions/BackP-38500+900000-" + HiddenNeurons2 + "neurons.txt";
 	
 		if (File.Exists(fileName))
         {

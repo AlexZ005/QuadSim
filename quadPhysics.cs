@@ -5,6 +5,15 @@ using Rapid.Tools;
 
 public class quadPhysics : MonoBehaviour
 {
+
+public int speed;
+public float friction;
+public float lerpSpeed;
+private float xDeg;
+private float yDeg;
+private Quaternion fromRotation;
+private Quaternion toRotation;
+
 	private Backpropagation bp = null;
 	
 	public float[] ans = new float[4]; 
@@ -111,7 +120,7 @@ public class quadPhysics : MonoBehaviour
 		ans_stable[3] = 0;
 		
 		
-		transform.Rotate (new Vector3 (-90, 0, 0));
+//		transform.Rotate (new Vector3 (-90, 0, 0));
 		
 		// visual thrust indicators update
 		float scale = 0.01f;
@@ -175,6 +184,9 @@ public class quadPhysics : MonoBehaviour
 		if (Input.GetKeyDown ("space"))
 		Destroy(gameObject);
 
+		
+
+
 
 		float dt = Time.deltaTime * 1;
 		
@@ -183,6 +195,23 @@ public class quadPhysics : MonoBehaviour
 		//Vector4 inputs = controller.getInputs (transform.position, xdot, theta, thetadot);
 		
 		Vector4 inputs = new Vector4();
+		
+				    if (Input.GetMouseButton(0)) {
+			transform.Rotate (new Vector3 (0, 0, 5));
+        xDeg -= Input.GetAxis("Mouse X");
+        yDeg += Input.GetAxis("Mouse Y");
+		//Debug.Log("Mouse pos : " + xDeg + " " + yDeg);
+		Debug.Log(transform.rotation);
+		transform.Rotate(Vector3.right * Time.deltaTime);	
+		inputs[0] = xDeg*10000;
+		inputs[1] = yDeg*10000;
+		inputs[2] = xDeg*10000;
+		inputs[3] = yDeg*10000;
+        // fromRotation = transform.rotation;
+        // toRotation = Quaternion.Euler(yDeg, xDeg, 0);
+        // transform.rotation = Quaternion.Lerp(fromRotation, toRotation, Time.deltaTime * lerpSpeed);
+    }
+		
 		
 		ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); 
 		
@@ -195,10 +224,17 @@ public class quadPhysics : MonoBehaviour
 		  //inputs[2] = ans_stable[0]*10000-ans[0]*10000;
 		  //inputs[3] = ans_stable[0]*10000-ans[0]*10000;
 		  
-		  inputs[0] = ans[0]*10000;
-		  inputs[1] = ans[0]*10000;
-		  inputs[2] = ans[0]*10000;
-		  inputs[3] = ans[0]*10000;
+		  // inputs[0] = ans[0]*10000;
+		  // inputs[1] = ans[1]*10000;
+		  // inputs[0] = ans[2]*10000;
+		  // inputs[1] = ans[3]*10000;
+		  
+		  //if (Input.GetKeyDown (KeyCode.V)) {
+		  inputs[0] = -ans[1]*10000;
+		  inputs[1] = ans[1]*10000;
+		  inputs[2] = -ans[1]*10000;
+		  inputs[3] = ans[1]*10000;
+		  //}
 		}
 		else
 		{
@@ -258,26 +294,31 @@ if (Input.GetKeyDown (KeyCode.H)) {
 
 	//STEP1: ONLY FOR WRITING sample-data
 	
-/* 	{
-		if (transform.rotation[1] != 0)
-		StartFile(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3],lastInput[0]/10000,lastInput[1]/10000,lastInput[2]/10000,lastInput[3]/10000);
+	{
+		//if (transform.rotation[1] != 0)
+		//StartFile(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3],lastInput[0]/10000,lastInput[1]/10000,lastInput[2]/10000,lastInput[3]/10000);
 		
-		if ((int)lastInput[1] <= 0.0 && (int)lastInput[2] <= 0.0 && (int)lastInput[3] <= 0.0 && (int)lastInput[0] <= 0.0 && (int)transform.rotation[0] >= -0.7000001 && transform.rotation[1] <= 0.0000001 && (int)transform.rotation[2] <= 0.0000001 && (int)transform.rotation[3] >= -0.7000001 && transform.rotation[1] >= -0.0000001 && transform.rotation[2] >= -0.0000001 && (int)transform.rotation[0] <= 0.7000001 && (int)transform.rotation[3] <= 0.7000001)
+		//if ((int)lastInput[1] <= 0.0 && (int)lastInput[2] <= 0.0 && (int)lastInput[3] <= 0.0 && (int)lastInput[0] <= 0.0 && (int)transform.rotation[0] >= -0.7000001 && transform.rotation[1] <= 0.0000001 && (int)transform.rotation[2] <= 0.0000001 && (int)transform.rotation[3] >= -0.7000001 && transform.rotation[1] >= -0.0000001 && transform.rotation[2] >= -0.0000001 && (int)transform.rotation[0] <= 0.7000001 && (int)transform.rotation[3] <= 0.7000001)
+		//for soft data
+		
+/* 		if ((int)lastInput[1] <= 0.0 && (int)lastInput[2] <= 0.0 && (int)lastInput[3] <= 0.0 && (int)lastInput[0] <= 0.0 && (int)transform.rotation[0] >= -0.7000001)
+		//for rough data
 		{
 			Debug.Log(transform.rotation[1]);
 			this.reset ();
 			controller.reset ();
-		}
-	} */
+		} */
+	}
 
 Graph.Log("sin_cos", Mathf.Sin(Time.time), Mathf.Cos(Time.time),(Mathf.Log(1 + Time.time) - Mathf.Log(1 - Time.time))/2);
 Graph.Log("PID", lastInput[0],lastInput[1],lastInput[2],lastInput[3]);
 //ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); //взять следующие данные, которые посчитала нейронная сеть
-Graph.Log("BackProp", ans[0],ans[1],ans[2],ans[3]);
+//Graph.Log("BackProp", ans[0],ans[1],ans[2],ans[3]);
+Graph.Log("BackProp", ans[2],ans[3],ans[2],ans[3]); // for symmetry
 
 if (Input.GetKeyDown (KeyCode.U)) {
 	//STEP2: USE ONLY AFTER feedForward computation
-//ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); //взять следующие данные, которые посчитала нейронная сеть
+ans = bp.feedForwardContinue(transform.rotation[0],transform.rotation[1],transform.rotation[2],transform.rotation[3]); //взять следующие данные, которые посчитала нейронная сеть
 Debug.Log("Test ans: [0] " + ans[0]*10000 + " [1] " + ans[1]*10000 + " [2] " + ans[2]*10000 + " [3] " + ans[3]*10000);		//вероятнее всего это будет надо подавать на квадрокоптер	
 
 //transform.Rotate (new Vector3 (0, 5, 0));
@@ -408,6 +449,12 @@ ConsoleLog.Instance.Log("BackSpeed\t[0] " + ans[0]*10000 + "\t[1] " + ans[1]*100
 	}
 	
 	
+
+
+
+
+	
+	
 	private void OnGUI ()
 	{
 	GUI.color = Color.red;
@@ -432,7 +479,10 @@ ConsoleLog.Instance.Log("BackSpeed\t[0] " + ans[0]*10000 + "\t[1] " + ans[1]*100
 			"\n\nrotation: " + transform.rotation.ToString () +
 			"\n\ninputs:\n   " + lastInput.ToString () +
 			"\n\nHidden neurons:   " + bp.HiddenProof().ToString () +
-			"\n\nns:\n   " + (ans[0]*10000));	///(ans_stable[0]*10000-ans[0]*10000)); /// were doing so to make it 0
+			"\n\nns:\n   " + (ans[0]*10000) +
+			" " + (ans[1]*10000) +
+			" " + (ans[2]*10000) +
+			" " + (ans[3]*10000));	///(ans_stable[0]*10000-ans[0]*10000)); /// were doing so to make it 0
 	
 	}
 	
